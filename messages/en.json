@@ -1,0 +1,81 @@
+{
+  "Navigation": {
+    "dashboard": "Dashboard",
+    "costing": "Costing Form",
+    "analytics": "Analytics",
+    "language": "Language",
+    "en": "English",
+    "tr": "Turkish"
+  },
+  "Dashboard": {
+    "title": "Production Dashboard",
+    "total_planned_qty": "Total Planned Qty",
+    "avg_profit_margin": "Average Profit Margin",
+    "kanban_view": "Kanban View",
+    "table_view": "Table View",
+    "no_items": "No production items found."
+  },
+  "Status": {
+    "SAMPLE_SEWN": "Sample Sewn",
+    "WAITING_FABRIC": "Waiting Fabric",
+    "IN_CUTTING": "In Cutting",
+    "IN_SEWING": "In Sewing",
+    "IRON_PACK": "Iron/Pack",
+    "IN_WAREHOUSE": "In Warehouse",
+    "SHIPPED": "Shipped"
+  },
+  "Costing": {
+    "title": "Costing & Tracking Form",
+    "model_info": "Model Information",
+    "dates_tracking": "Dates & Tracking",
+    "materials_table": "Materials",
+    "labor_table": "Labor Costs",
+    "profitability_summary": "Profitability Summary",
+    "target_loading_date": "Target Loading Date",
+    "po_date": "PO Date",
+    "received_qty": "Received Qty",
+    "add_material": "Add Material",
+    "add_labor": "Add Labor Cost",
+    "material_type": "Material Type",
+    "supplier": "Supplier",
+    "unit_consumption": "Unit Cons.",
+    "unit_price": "Unit Price",
+    "waste_rate": "Waste Rate (%)",
+    "total": "Total",
+    "operation_name": "Operation Name",
+    "cost_amount": "Cost Amount",
+    "total_material_cost": "Total Material Cost",
+    "total_labor_cost": "Total Labor Cost",
+    "total_unit_cost": "Total Unit Cost",
+    "target_selling_price": "Target Selling Price",
+    "profit_margin": "Profit Margin (%)",
+    "save": "Save",
+    "cancel": "Cancel",
+    "material_specs": "Material Specifications",
+    "fabric_supplier": "Fabric Supplier",
+    "fabric_quality": "Fabric Quality",
+    "fabric_composition": "Fabric Composition",
+    "lining_detail": "Lining Detail",
+    "color_name": "Color Name",
+    "color_code": "Color Code",
+    "fabric_order_status": "Fabric Order Status",
+    "notes": "Notes/Remarks",
+    "upload_image": "Upload Image",
+    "change_image": "Change Image",
+    "material_categories": {
+      "MAIN_FABRIC": "Main Fabric",
+      "LINING": "Lining",
+      "GARNI": "Garni",
+      "BUTTON": "Button",
+      "ZIPPER": "Zipper",
+      "LABEL": "Label",
+      "PACKAGING": "Packaging"
+    },
+    "fabric_status": {
+      "MANUFACTURER_WAREHOUSE": "Manufacturer Warehouse",
+      "PENDING": "Pending",
+      "ORDERED": "Ordered",
+      "DELIVERED": "Delivered"
+    }
+  }
+}

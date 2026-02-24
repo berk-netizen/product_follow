@@ -1,0 +1,81 @@
+{
+    "Navigation": {
+        "dashboard": "Gösterge Paneli",
+        "costing": "Maliyet Formu",
+        "analytics": "Analizler",
+        "language": "Dil",
+        "en": "İngilizce",
+        "tr": "Türkçe"
+    },
+    "Dashboard": {
+        "title": "Üretim Panosu",
+        "total_planned_qty": "Toplam Planlanan Adet",
+        "avg_profit_margin": "Ortalama Kar Marjı",
+        "kanban_view": "Kanban Görünümü",
+        "table_view": "Tablo Görünümü",
+        "no_items": "Üretim kalemi bulunamadı."
+    },
+    "Status": {
+        "SAMPLE_SEWN": "Numune Dikildi",
+        "WAITING_FABRIC": "Kumaş Bekliyor",
+        "IN_CUTTING": "Kesimde",
+        "IN_SEWING": "Dikimde",
+        "IRON_PACK": "Ütü/Paket",
+        "IN_WAREHOUSE": "Depoda",
+        "SHIPPED": "Yüklendi"
+    },
+    "Costing": {
+        "title": "Maliyet ve Takip Formu",
+        "model_info": "Model Bilgileri",
+        "dates_tracking": "Tarihler ve Takip",
+        "materials_table": "Malzemeler",
+        "labor_table": "İşçilik Maliyetleri",
+        "profitability_summary": "Karlılık Özeti",
+        "target_loading_date": "Hedef Yükleme Tarihi",
+        "po_date": "Sipariş (PO) Tarihi",
+        "received_qty": "Gelen Miktar",
+        "add_material": "Malzeme Ekle",
+        "add_labor": "İşçilik Ekle",
+        "material_type": "Malzeme Türü",
+        "supplier": "Tedarikçi",
+        "unit_consumption": "Birim Sarfiyat",
+        "unit_price": "Birim Fiyat",
+        "waste_rate": "Fire Oranı (%)",
+        "total": "Toplam",
+        "operation_name": "Operasyon Adı",
+        "cost_amount": "Maliyet Tutarı",
+        "total_material_cost": "Toplam Malzeme Maliyeti",
+        "total_labor_cost": "Toplam İşçilik Maliyeti",
+        "total_unit_cost": "Toplam Birim Maliyet",
+        "target_selling_price": "Hedef Satış Fiyatı",
+        "profit_margin": "Kar Marjı (%)",
+        "save": "Kaydet",
+        "cancel": "İptal",
+        "material_specs": "Malzeme Spesifikasyonları",
+        "fabric_supplier": "Kumaş Tedarikçisi",
+        "fabric_quality": "Kumaş Kalitesi",
+        "fabric_composition": "Kumaş Kompozisyonu",
+        "lining_detail": "Astar Detayı",
+        "color_name": "Renk Adı",
+        "color_code": "Renk Kodu",
+        "fabric_order_status": "Kumaş Sipariş Durumu",
+        "notes": "Notlar/Açıklamalar",
+        "upload_image": "Resim Yükle",
+        "change_image": "Resmi Değiştir",
+        "material_categories": {
+            "MAIN_FABRIC": "Ana Kumaş",
+            "LINING": "Astar",
+            "GARNI": "Garni",
+            "BUTTON": "Düğme",
+            "ZIPPER": "Fermuar",
+            "LABEL": "Etiket",
+            "PACKAGING": "Paketleme"
+        },
+        "fabric_status": {
+            "MANUFACTURER_WAREHOUSE": "Üretici Deposu",
+            "PENDING": "Beklemede",
+            "ORDERED": "Sipariş Edildi",
+            "DELIVERED": "Teslim Edildi"
+        }
+    }
+}
