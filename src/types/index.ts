@@ -9,8 +9,8 @@ export interface ProductionItem {
     manufacturer: string;
     status: Status;
     sizes_breakdown: Record<string, number>;
-    target_loading_date: string;
-    po_date: string;
+    target_loading_date: string | null;
+    po_date: string | null;
     fabric_arrival_date: string | null;
     cutting_date: string | null;
     actual_mfg_deadline: string | null;

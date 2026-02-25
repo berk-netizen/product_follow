@@ -41,18 +41,18 @@ export default function DashboardClient() {
             manufacturer: newItemData.manufacturer || 'N/A',
             status: 'SAMPLE SEWN',
             sizes_breakdown: {},
-            target_loading_date: newItemData.target_loading_date || '',
-            po_date: '',
+            target_loading_date: newItemData.target_loading_date || null,
+            po_date: null,
             fabric_arrival_date: null,
             cutting_date: null,
             actual_mfg_deadline: null,
             image_url: null,
-            fabric_supplier: 'N/A',
-            fabric_quality: 'N/A',
-            fabric_composition: 'N/A',
-            lining_detail: 'N/A',
-            color_name: 'N/A',
-            color_code: 'N/A',
+            fabric_supplier: null,
+            fabric_quality: null,
+            fabric_composition: null,
+            lining_detail: null,
+            color_name: null,
+            color_code: null,
             fabric_order_status: 'PENDING',
             planned_qty: newItemData.planned_qty || 0,
             received_qty: 0,
@@ -64,9 +64,13 @@ export default function DashboardClient() {
             const createdItem = await createProductionItem(newItem);
             if (createdItem) {
                 setItems(prev => [createdItem, ...prev]);
+            } else {
+                console.error("Failed to create: Supabase returned no data.");
+                alert("Ürün eklenemedi. Konsola bakın.");
             }
         } catch (error) {
             console.error("Failed to create product", error);
+            alert("Ürün eklenemedi.");
         }
     };
 
