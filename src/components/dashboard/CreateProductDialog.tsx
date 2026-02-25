@@ -50,7 +50,7 @@ export function CreateProductDialog({ onAdd }: CreateProductDialogProps) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button className="bg-slate-900 hover:bg-slate-800 text-white shadow-sm gap-2">
+                <Button className="bg-kntlgy-blue hover:bg-kntlgy-blue/90 text-white shadow-sm gap-2">
                     <Plus className="h-4 w-4" />
                     New Product
                 </Button>
@@ -144,7 +144,7 @@ export function CreateProductDialog({ onAdd }: CreateProductDialogProps) {
                         </div>
                     </div>
                     <DialogFooter>
-                        <Button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-700">Add to Board</Button>
+                        <Button type="submit" className="w-full bg-kntlgy-blue hover:bg-kntlgy-blue/90 text-white">Add to Board</Button>
                     </DialogFooter>
                 </form>
             </DialogContent>

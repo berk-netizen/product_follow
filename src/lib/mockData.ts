@@ -157,3 +157,17 @@ export const getProductMaterials = async (productId: string): Promise<ProductMat
 export const getProductLaborCosts = async (productId: string): Promise<ProductLaborCost[]> => {
     return new Promise((resolve) => setTimeout(() => resolve(MOCK_LABOR_COSTS[productId] || []), 300));
 };
+
+export const updateProductionItem = async (id: string, updates: Partial<ProductionItem>): Promise<ProductionItem | undefined> => {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            const index = MOCK_PRODUCTION_ITEMS.findIndex(item => item.id === id);
+            if (index !== -1) {
+                MOCK_PRODUCTION_ITEMS[index] = { ...MOCK_PRODUCTION_ITEMS[index], ...updates };
+                resolve(MOCK_PRODUCTION_ITEMS[index]);
+            } else {
+                resolve(undefined);
+            }
+        }, 400);
+    });
+};

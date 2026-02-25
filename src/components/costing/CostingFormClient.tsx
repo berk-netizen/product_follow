@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { useRouter } from "next/navigation"
 import { ProductionItem, ProductMaterial, ProductLaborCost, Status } from "@/types"
+import { updateProductionItem } from "@/lib/mockData"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -69,10 +70,33 @@ export default function CostingFormClient({
         setProduct(prev => ({ ...prev, status: status as Status }))
     }
 
-    const handleSave = () => {
-        // In real app, trigger Supabase Update
-        console.log("Saving...", { product, targetLoadingDate, poDate, receivedQty, specs, imagePreview })
-        alert("Saved successfully! (Mock)")
+    const handleSave = async () => {
+        try {
+            const updates: Partial<ProductionItem> = {
+                status: product.status,
+                target_loading_date: targetLoadingDate,
+                po_date: poDate,
+                fabric_arrival_date: fabricArrivalDate,
+                cutting_date: cuttingDate,
+                actual_mfg_deadline: mfgDeadline,
+                received_qty: parseInt(receivedQty) || 0,
+                image_url: imagePreview,
+                fabric_supplier: specs.fabric_supplier,
+                fabric_quality: specs.fabric_quality,
+                fabric_composition: specs.fabric_composition,
+                lining_detail: specs.lining_detail,
+                color_name: specs.color_name,
+                color_code: specs.color_code,
+                fabric_order_status: specs.fabric_order_status as 'MANUFACTURER WAREHOUSE' | 'PENDING' | 'ORDERED' | 'DELIVERED',
+                target_sales_price: product.target_sales_price
+            };
+
+            await updateProductionItem(product.id, updates);
+            alert("Saved successfully!");
+        } catch (error) {
+            console.error("Failed to save", error);
+            alert("Error saving data");
+        }
     }
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -124,7 +148,7 @@ export default function CostingFormClient({
                         </SelectContent>
                     </Select>
 
-                    <Button onClick={handleSave} className="gap-2 bg-emerald-600 hover:bg-emerald-700 shadow-sm">
+                    <Button onClick={handleSave} className="gap-2 bg-kntlgy-blue hover:bg-kntlgy-blue/90 text-white shadow-sm">
                         <Save className="h-4 w-4" />
                         {t("save")}
                     </Button>
@@ -345,6 +369,7 @@ export default function CostingFormClient({
                                         <th className="p-3 text-right">{t("unit_consumption")}</th>
                                         <th className="p-3 text-right">{t("unit_price")}</th>
                                         <th className="p-3 text-center">{t("waste_rate")}</th>
+                                        <th className="p-3">Status</th>
                                         <th className="p-3">{t("notes")}</th>
                                         <th className="p-3 text-right pr-4">{t("total")}</th>
                                     </tr>
@@ -365,6 +390,7 @@ export default function CostingFormClient({
                                                         <SelectItem value="Zipper">{t("material_categories.ZIPPER")}</SelectItem>
                                                         <SelectItem value="Label">{t("material_categories.LABEL")}</SelectItem>
                                                         <SelectItem value="Packaging">{t("material_categories.PACKAGING")}</SelectItem>
+                                                        <SelectItem value="Accessory">Accessory</SelectItem>
                                                     </SelectContent>
                                                 </Select>
                                             </td>
@@ -373,6 +399,18 @@ export default function CostingFormClient({
                                             <td className="p-3 text-right font-mono text-slate-600">${mat.unit_price}</td>
                                             <td className="p-3 text-center">
                                                 <Badge variant="outline" className="bg-white font-mono text-xs">{mat.waste_rate * 100}%</Badge>
+                                            </td>
+                                            <td className="p-3">
+                                                <Select defaultValue={mat.order_status}>
+                                                    <SelectTrigger className="h-8 text-xs border-0 bg-transparent p-0 focus:ring-0 shadow-none font-medium text-slate-700 w-[100px]">
+                                                        <SelectValue />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="PENDING">Pending</SelectItem>
+                                                        <SelectItem value="ORDERED">Ordered</SelectItem>
+                                                        <SelectItem value="DELIVERED">Delivered</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
                                             </td>
                                             <td className="p-3 text-slate-400 italic text-xs max-w-[200px] truncate">
                                                 {mat.notes || "-"}

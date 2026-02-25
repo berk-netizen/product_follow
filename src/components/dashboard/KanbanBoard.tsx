@@ -40,7 +40,8 @@ export default function KanbanBoard({ initialItems }: KanbanBoardProps) {
     const sensors = useSensors(
         useSensor(PointerSensor, {
             activationConstraint: {
-                distance: 5,
+                delay: 150,
+                tolerance: 5,
             },
         }),
         useSensor(KeyboardSensor, {

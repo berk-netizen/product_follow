@@ -44,8 +44,8 @@ export default async function RootLayout({
             <header className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-10 w-full shadow-sm">
               <div className="flex items-center gap-8">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded bg-slate-900 flex items-center justify-center text-white font-bold text-lg">P</div>
-                  <h1 className="text-xl font-semibold tracking-tight text-slate-900">Product Follow</h1>
+                  <div className="w-8 h-8 rounded bg-kntlgy-blue flex items-center justify-center text-white font-bold text-lg">K</div>
+                  <h1 className="text-xl font-bold tracking-tight text-kntlgy-blue">KNTLGY</h1>
                 </div>
 
                 <nav className="hidden md:flex items-center gap-6">
