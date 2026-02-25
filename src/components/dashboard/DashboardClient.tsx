@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { ProductionItem } from "@/types";
-import { getProductionItems } from "@/lib/mockData";
+import { getProductionItems, createProductionItem } from "@/lib/mockData";
 import { Button } from "@/components/ui/button";
 import { LayoutDashboard, TableProperties } from "lucide-react";
 import KanbanBoard from "./KanbanBoard";
@@ -32,10 +32,8 @@ export default function DashboardClient() {
         fetchItems();
     }, []);
 
-    const handleCreateProduct = (newItemData: Partial<ProductionItem>) => {
-        // Mock ID generation and default status
-        const newItem: ProductionItem = {
-            id: `mock-new-${Date.now()}`,
+    const handleCreateProduct = async (newItemData: Partial<ProductionItem>) => {
+        const newItem: Partial<ProductionItem> = {
             season: newItemData.season || 'N/A',
             model_code: newItemData.model_code || 'N/A',
             model_name: newItemData.model_name || 'New Item',
@@ -60,10 +58,16 @@ export default function DashboardClient() {
             received_qty: 0,
             target_sales_price: 0,
             final_sales_price_tl: 0,
-            created_at: new Date().toISOString(),
         }
 
-        setItems(prev => [newItem, ...prev]);
+        try {
+            const createdItem = await createProductionItem(newItem);
+            if (createdItem) {
+                setItems(prev => [createdItem, ...prev]);
+            }
+        } catch (error) {
+            console.error("Failed to create product", error);
+        }
     };
 
     const totalPlannedQty = items.reduce((sum, item) => sum + item.planned_qty, 0);

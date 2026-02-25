@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities";
 import { ProductionItem } from "@/types";
@@ -69,8 +71,13 @@ export function ItemCard({ item, isOverlay }: ItemCardProps) {
                 isDragging && "ring-2 ring-emerald-500/50"
             )}>
                 {item.image_url && (
-                    <div className="w-full h-32 overflow-hidden border-b border-slate-100">
-                        <img src={item.image_url} alt={item.model_name} className="w-full h-full object-cover transition-transform hover:scale-105 duration-500" />
+                    <div className="relative w-full h-32 overflow-hidden border-b border-slate-100">
+                        <Image
+                            src={item.image_url}
+                            alt={item.model_name}
+                            fill
+                            className="object-cover transition-transform hover:scale-105 duration-500"
+                        />
                     </div>
                 )}
                 <CardHeader className="p-4 pb-2 space-y-1">

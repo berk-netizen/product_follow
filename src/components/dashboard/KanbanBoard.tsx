@@ -17,6 +17,7 @@ import {
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { KanbanColumn } from "./KanbanColumn";
 import { ItemCard } from "./ItemCard";
+import { updateProductionItem } from "@/lib/mockData";
 
 const STATUS_COLUMNS: Status[] = [
     'SAMPLE SEWN',
@@ -40,8 +41,7 @@ export default function KanbanBoard({ initialItems }: KanbanBoardProps) {
     const sensors = useSensors(
         useSensor(PointerSensor, {
             activationConstraint: {
-                delay: 150,
-                tolerance: 5,
+                distance: 5,
             },
         }),
         useSensor(KeyboardSensor, {
@@ -75,8 +75,10 @@ export default function KanbanBoard({ initialItems }: KanbanBoardProps) {
                 const overItem = prev[overIndex];
 
                 if (activeItem.status !== overItem.status) {
+                    const newStatus = overItem.status;
+                    updateProductionItem(activeItem.id, { status: newStatus });
                     const newItems = [...prev];
-                    newItems[activeIndex] = { ...activeItem, status: overItem.status };
+                    newItems[activeIndex] = { ...activeItem, status: newStatus };
                     return arrayMove(newItems, activeIndex, overIndex);
                 }
 
@@ -89,6 +91,7 @@ export default function KanbanBoard({ initialItems }: KanbanBoardProps) {
                 const overStatus = overId as Status;
 
                 if (activeItem.status !== overStatus) {
+                    updateProductionItem(activeItem.id, { status: overStatus });
                     const newItems = [...prev];
                     newItems[activeIndex] = { ...activeItem, status: overStatus };
                     return newItems;

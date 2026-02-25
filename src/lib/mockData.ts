@@ -1,173 +1,163 @@
+import { supabase } from '../utils/supabase';
 import { ProductionItem, ProductMaterial, ProductLaborCost } from '../types';
 
-export const MOCK_PRODUCTION_ITEMS: ProductionItem[] = [
-    {
-        id: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
-        season: 'SS25',
-        model_code: 'MDL-001',
-        model_name: 'Summer Breeze Dress',
-        category: 'Dresses',
-        manufacturer: 'MACHINIST',
-        status: 'IN CUTTING',
-        sizes_breakdown: { 'S': 50, 'M': 100, 'L': 50 },
-        target_loading_date: '2024-05-15',
-        po_date: '2024-02-01',
-        fabric_arrival_date: '2024-03-01',
-        cutting_date: '2024-03-15',
-        actual_mfg_deadline: '2024-05-01',
-        image_url: '/summer_breeze.png',
-        fabric_supplier: 'GAYRET TEKSTİL',
-        fabric_quality: 'SAN FRANCISCO',
-        fabric_composition: '%45 Wool, %55 Polyester',
-        lining_detail: 'TWILL',
-        color_name: 'NAVY BLUE',
-        color_code: '450',
-        fabric_order_status: 'PENDING',
-        planned_qty: 200,
-        received_qty: 0,
-        target_sales_price: 89.99,
-        final_sales_price_tl: 2850.00,
-        created_at: '2024-02-15T12:00:00Z',
-    },
-    {
-        id: 'b1234567-89ab-cdef-0123-456789abcdef',
-        season: 'AW24',
-        model_code: 'JCK-102',
-        model_name: 'Winter Puffer Jacket',
-        category: 'Outerwear',
-        manufacturer: 'GLOBAL ART',
-        status: 'WAITING FABRIC',
-        sizes_breakdown: { 'M': 150, 'L': 150, 'XL': 50 },
-        target_loading_date: '2024-09-01',
-        po_date: '2024-01-20',
-        fabric_arrival_date: null,
-        cutting_date: null,
-        actual_mfg_deadline: '2024-08-15',
-        image_url: null,
-        fabric_supplier: 'SÖKTAŞ',
-        fabric_quality: 'MALDIVE',
-        fabric_composition: '100% ORG COTTON',
-        lining_detail: '40/1 POPLIN',
-        color_name: 'BLACK',
-        color_code: '800',
-        fabric_order_status: 'ORDERED',
-        planned_qty: 350,
-        received_qty: 0,
-        target_sales_price: 149.99,
-        final_sales_price_tl: 4500.00,
-        created_at: '2024-01-25T09:30:00Z',
-    },
-    {
-        id: 'c2345678-9abc-def0-1234-56789abcdef0',
-        season: 'SS25',
-        model_code: 'TSH-505',
-        model_name: 'Basic Cotton Tee',
-        category: 'T-Shirts',
-        manufacturer: 'MACHINIST',
-        status: 'SAMPLE SEWN',
-        sizes_breakdown: { 'XS': 100, 'S': 200, 'M': 300, 'L': 200, 'XL': 100 },
-        target_loading_date: '2024-04-10',
-        po_date: '2023-12-15',
-        fabric_arrival_date: '2024-01-10',
-        cutting_date: null,
-        actual_mfg_deadline: '2024-03-25',
-        image_url: null,
-        fabric_supplier: 'GAYRET TEKSTİL',
-        fabric_quality: 'SINGLE JERSEY',
-        fabric_composition: '100% Cotton',
-        lining_detail: 'N/A',
-        color_name: 'WHITE',
-        color_code: '01',
-        fabric_order_status: 'DELIVERED',
-        planned_qty: 900,
-        received_qty: 0,
-        target_sales_price: 24.99,
-        final_sales_price_tl: 750.00,
-        created_at: '2023-12-20T14:15:00Z',
-    }
-];
+// Supabase Service Functions
 
-export const MOCK_MATERIALS: Record<string, ProductMaterial[]> = {
-    'f47ac10b-58cc-4372-a567-0e02b2c3d479': [
-        {
-            id: 'm1',
-            product_id: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
-            material_type: 'Main Fabric',
-            supplier: 'Fabric Co. Ltd',
-            quality: '100% Cotton Poplin',
-            unit_consumption: 1.5,
-            unit_price: 4.50,
-            waste_rate: 0.03, // 3%
-            total_amount: (1.5 * 4.50) * 1.03,
-            order_status: 'OK',
-            notes: null
-        },
-        {
-            id: 'm2',
-            product_id: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
-            material_type: 'Brand Label',
-            supplier: 'Labels Inc',
-            quality: 'Woven',
-            unit_consumption: 1,
-            unit_price: 0.15,
-            waste_rate: 0.01,
-            total_amount: (1 * 0.15) * 1.01,
-            order_status: 'PENDING',
-            notes: null
-        }
-    ]
-};
-
-export const MOCK_LABOR_COSTS: Record<string, ProductLaborCost[]> = {
-    'f47ac10b-58cc-4372-a567-0e02b2c3d479': [
-        {
-            id: 'l1',
-            product_id: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
-            operation_name: 'PATTERN',
-            cost_amount: 1.20
-        },
-        {
-            id: 'l2',
-            product_id: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
-            operation_name: 'CM (CUT+MAKE+FINISH)',
-            cost_amount: 4.50
-        },
-        {
-            id: 'l3',
-            product_id: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
-            operation_name: 'LOGISTICS',
-            cost_amount: 0.80
-        }
-    ]
-};
-
-// Mock service functions
 export const getProductionItems = async (): Promise<ProductionItem[]> => {
-    return new Promise((resolve) => setTimeout(() => resolve(MOCK_PRODUCTION_ITEMS), 400));
+    const { data, error } = await supabase
+        .from('production_items')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('Error fetching production items:', error);
+        return [];
+    }
+    return data as ProductionItem[];
 };
 
 export const getProductionItemById = async (id: string): Promise<ProductionItem | undefined> => {
-    return new Promise((resolve) => setTimeout(() => resolve(MOCK_PRODUCTION_ITEMS.find(item => item.id === id)), 400));
+    const { data, error } = await supabase
+        .from('production_items')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+    if (error) {
+        console.error('Error fetching production item by ID:', error);
+        return undefined;
+    }
+    return data as ProductionItem;
+};
+
+export const createProductionItem = async (item: Partial<ProductionItem>): Promise<ProductionItem | undefined> => {
+    const { data, error } = await supabase
+        .from('production_items')
+        .insert([item])
+        .select()
+        .single();
+
+    if (error) {
+        console.error('Error creating production item:', error);
+        return undefined;
+    }
+    return data as ProductionItem;
 };
 
 export const getProductMaterials = async (productId: string): Promise<ProductMaterial[]> => {
-    return new Promise((resolve) => setTimeout(() => resolve(MOCK_MATERIALS[productId] || []), 300));
+    const { data, error } = await supabase
+        .from('product_materials')
+        .select('*')
+        .eq('product_id', productId)
+        .order('created_at', { ascending: true });
+
+    if (error) {
+        console.error('Error fetching product materials:', error);
+        return [];
+    }
+    return data as ProductMaterial[];
 };
 
 export const getProductLaborCosts = async (productId: string): Promise<ProductLaborCost[]> => {
-    return new Promise((resolve) => setTimeout(() => resolve(MOCK_LABOR_COSTS[productId] || []), 300));
+    const { data, error } = await supabase
+        .from('product_labor_costs')
+        .select('*')
+        .eq('product_id', productId)
+        .order('created_at', { ascending: true });
+
+    if (error) {
+        console.error('Error fetching product labor costs:', error);
+        return [];
+    }
+    return data as ProductLaborCost[];
 };
 
 export const updateProductionItem = async (id: string, updates: Partial<ProductionItem>): Promise<ProductionItem | undefined> => {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            const index = MOCK_PRODUCTION_ITEMS.findIndex(item => item.id === id);
-            if (index !== -1) {
-                MOCK_PRODUCTION_ITEMS[index] = { ...MOCK_PRODUCTION_ITEMS[index], ...updates };
-                resolve(MOCK_PRODUCTION_ITEMS[index]);
-            } else {
-                resolve(undefined);
-            }
-        }, 400);
+    const { data, error } = await supabase
+        .from('production_items')
+        .update(updates)
+        .eq('id', id)
+        .select()
+        .single();
+
+    if (error) {
+        console.error('Error updating production item:', error);
+        return undefined;
+    }
+    return data as ProductionItem;
+};
+
+// For Materials and Labor, we'll implement a "Sync" logic: 
+// It will UPSERT items that have a valid UUID, and DELETE items that are no longer in the list.
+// However, to keep it simple and matching the previous mock behavior (replace all),
+// we will DELETE children first and then INSERT the new list.
+// WARNING: This is less efficient than upserting but matches the current client-side state model.
+
+export const updateProductMaterials = async (productId: string, newMaterials: ProductMaterial[]): Promise<ProductMaterial[]> => {
+    // 1. Delete all existing materials for this product
+    const { error: deleteError } = await supabase
+        .from('product_materials')
+        .delete()
+        .eq('product_id', productId);
+
+    if (deleteError) {
+        console.error('Error deleting old materials:', deleteError);
+        throw deleteError;
+    }
+
+    // 2. Prepare materials for insertion (remove IDs if they are temporary client-side strings)
+    const materialsToInsert = newMaterials.map(({ id, ...rest }) => {
+        // If the ID is a transient client-side ID (doesn't look like a UUID), let Supabase generate it
+        const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id);
+        return isUUID ? { id, ...rest } : rest;
     });
+
+    if (materialsToInsert.length === 0) return [];
+
+    // 3. Insert new materials
+    const { data, error: insertError } = await supabase
+        .from('product_materials')
+        .insert(materialsToInsert)
+        .select();
+
+    if (insertError) {
+        console.error('Error inserting new materials:', insertError);
+        throw insertError;
+    }
+
+    return data as ProductMaterial[];
+};
+
+export const updateProductLaborCosts = async (productId: string, newLaborCosts: ProductLaborCost[]): Promise<ProductLaborCost[]> => {
+    // 1. Delete all existing labor costs for this product
+    const { error: deleteError } = await supabase
+        .from('product_labor_costs')
+        .delete()
+        .eq('product_id', productId);
+
+    if (deleteError) {
+        console.error('Error deleting old labor costs:', deleteError);
+        throw deleteError;
+    }
+
+    // 2. Prepare labor costs for insertion
+    const laborToInsert = newLaborCosts.map(({ id, ...rest }) => {
+        const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id);
+        return isUUID ? { id, ...rest } : rest;
+    });
+
+    if (laborToInsert.length === 0) return [];
+
+    // 3. Insert new labor costs
+    const { data, error: insertError } = await supabase
+        .from('product_labor_costs')
+        .insert(laborToInsert)
+        .select();
+
+    if (insertError) {
+        console.error('Error inserting new labor costs:', insertError);
+        throw insertError;
+    }
+
+    return data as ProductLaborCost[];
 };

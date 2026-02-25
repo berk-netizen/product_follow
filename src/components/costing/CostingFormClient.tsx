@@ -1,16 +1,18 @@
 "use client"
 
+import Image from "next/image"
+
 import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { useRouter } from "next/navigation"
 import { ProductionItem, ProductMaterial, ProductLaborCost, Status } from "@/types"
-import { updateProductionItem } from "@/lib/mockData"
+import { updateProductionItem, updateProductMaterials, updateProductLaborCosts } from "@/lib/mockData"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { Calendar, Save, ArrowLeft, Package, UserSquare2, TrendingUp, Clock, Image as ImageIcon, Upload, X, Tag } from "lucide-react"
+import { Calendar, Save, ArrowLeft, Package, UserSquare2, TrendingUp, Clock, Image as ImageIcon, Upload, X, Tag, Plus } from "lucide-react"
 import { getDeadlineBadge } from "@/lib/dateUtils"
 import { Label } from "@/components/ui/label"
 
@@ -40,8 +42,8 @@ export default function CostingFormClient({
     const router = useRouter()
 
     const [product, setProduct] = useState<ProductionItem>(initialProduct)
-    const [materials] = useState<ProductMaterial[]>(initialMaterials)
-    const [laborCosts] = useState<ProductLaborCost[]>(initialLaborCosts)
+    const [materials, setMaterials] = useState<ProductMaterial[]>(initialMaterials)
+    const [laborCosts, setLaborCosts] = useState<ProductLaborCost[]>(initialLaborCosts)
 
     // Tracking sections
     const [targetLoadingDate, setTargetLoadingDate] = useState(initialProduct.target_loading_date || "")
@@ -92,12 +94,30 @@ export default function CostingFormClient({
             };
 
             await updateProductionItem(product.id, updates);
+            await updateProductMaterials(product.id, materials);
+            await updateProductLaborCosts(product.id, laborCosts);
             alert("Saved successfully!");
         } catch (error) {
             console.error("Failed to save", error);
             alert("Error saving data");
         }
     }
+
+    const updateMaterial = (id: string, materialUpdates: Partial<ProductMaterial>) => {
+        setMaterials(prev => prev.map(m => {
+            if (m.id !== id) return m;
+            const updated = { ...m, ...materialUpdates };
+            updated.total_amount = (updated.unit_consumption * updated.unit_price) * (1 + updated.waste_rate);
+            return updated;
+        }));
+    };
+
+    const updateLabor = (id: string, laborUpdates: Partial<ProductLaborCost>) => {
+        setLaborCosts(prev => prev.map(l => {
+            if (l.id !== id) return l;
+            return { ...l, ...laborUpdates };
+        }));
+    };
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
@@ -122,9 +142,21 @@ export default function CostingFormClient({
                     </Button>
                     <div>
                         <div className="flex items-center gap-3">
-                            <h1 className="text-xl font-bold text-slate-900 tracking-tight">{product.model_name}</h1>
-                            <Badge variant="outline" className="font-mono text-slate-500 bg-slate-50">{product.model_code}</Badge>
-                            <Badge className="bg-emerald-50 text-emerald-700 hover:bg-emerald-50 border-0">{product.season}</Badge>
+                            <Input
+                                value={product.model_name}
+                                onChange={(e) => setProduct({ ...product, model_name: e.target.value })}
+                                className="text-xl font-bold text-slate-900 tracking-tight border-transparent hover:border-slate-200 focus:border-emerald-500 bg-transparent h-auto py-1 px-2 w-64 shadow-none"
+                            />
+                            <Input
+                                value={product.model_code}
+                                onChange={(e) => setProduct({ ...product, model_code: e.target.value })}
+                                className="font-mono text-sm text-slate-500 bg-slate-50 border-slate-200 h-7 w-28 px-2"
+                            />
+                            <Input
+                                value={product.season}
+                                onChange={(e) => setProduct({ ...product, season: e.target.value })}
+                                className="bg-emerald-50 text-emerald-700 h-7 w-20 px-2 font-semibold text-xs border-transparent focus:border-emerald-500"
+                            />
                             {deadlineBadge && (
                                 <Badge variant={deadlineBadge.variant} className={deadlineBadge.colorClass}>
                                     <Clock className="w-3 h-3 mr-1" />
@@ -132,7 +164,21 @@ export default function CostingFormClient({
                                 </Badge>
                             )}
                         </div>
-                        <p className="text-sm text-slate-500 mt-0.5">{t("title")} &bull; {product.category} &bull; {product.manufacturer}</p>
+                        <div className="flex items-center gap-2 mt-1 px-2">
+                            <span className="text-sm text-slate-500">{t("title")}</span>
+                            <span className="text-slate-300">&bull;</span>
+                            <Input
+                                value={product.category}
+                                onChange={(e) => setProduct({ ...product, category: e.target.value })}
+                                className="text-sm text-slate-500 h-6 border-transparent hover:border-slate-200 bg-transparent px-1 w-28 shadow-none"
+                            />
+                            <span className="text-slate-300">&bull;</span>
+                            <Input
+                                value={product.manufacturer}
+                                onChange={(e) => setProduct({ ...product, manufacturer: e.target.value })}
+                                className="text-sm text-slate-500 h-6 border-transparent hover:border-slate-200 bg-transparent px-1 w-32 shadow-none"
+                            />
+                        </div>
                     </div>
                 </div>
 
@@ -171,7 +217,7 @@ export default function CostingFormClient({
                             <div className="relative aspect-square rounded-xl border-2 border-dashed border-slate-200 bg-slate-50/50 flex flex-col items-center justify-center overflow-hidden group">
                                 {imagePreview ? (
                                     <>
-                                        <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                                        <Image src={imagePreview} alt="Preview" fill className="object-cover" />
                                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                                             <Button size="sm" variant="secondary" onClick={() => document.getElementById('image-upload')?.click()}>
                                                 <Upload className="h-4 w-4 mr-2" />
@@ -250,7 +296,12 @@ export default function CostingFormClient({
                             </div>
                             <div className="space-y-2 pt-2 border-t border-slate-100">
                                 <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Planned Qty</label>
-                                <div className="text-xl font-bold text-slate-800 font-mono tracking-tight">{product.planned_qty}</div>
+                                <Input
+                                    type="number"
+                                    value={product.planned_qty}
+                                    onChange={(e) => setProduct({ ...product, planned_qty: parseInt(e.target.value) || 0 })}
+                                    className="font-bold text-lg text-slate-800 bg-slate-50/50 border-slate-200 font-mono"
+                                />
                             </div>
                             <div className="space-y-2 pt-2 border-t border-slate-100">
                                 <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{t("received_qty")}</label>
@@ -354,32 +405,60 @@ export default function CostingFormClient({
 
                     {/* Materials Table Placeholder */}
                     <Card className="border-slate-200 shadow-sm">
-                        <CardHeader className="bg-slate-50 border-b border-slate-100 py-4">
-                            <CardTitle className="text-sm font-semibold flex items-center gap-2 text-slate-700">
+                        <CardHeader className="bg-slate-50 border-b border-slate-100 py-4 flex flex-row items-center justify-between">
+                            <div className="flex items-center gap-2">
                                 <Package className="h-4 w-4 text-slate-500" />
-                                {t("materials_table")}
-                            </CardTitle>
+                                <CardTitle className="text-sm font-semibold text-slate-700">
+                                    {t("materials_table")}
+                                </CardTitle>
+                            </div>
+                            <Button
+                                size="sm"
+                                variant="default"
+                                onClick={() => {
+                                    const newMat: ProductMaterial = {
+                                        id: `mat-${Date.now()}`,
+                                        product_id: product.id,
+                                        material_type: 'Main Fabric',
+                                        supplier: '',
+                                        quality: '',
+                                        unit_consumption: 0,
+                                        unit_price: 0,
+                                        waste_rate: 0,
+                                        total_amount: 0,
+                                        order_status: 'PENDING',
+                                        notes: ''
+                                    };
+                                    setMaterials(prev => [...prev, newMat]);
+                                }}
+                                className="h-8 shadow-sm bg-blue-600 hover:bg-blue-700 text-white"
+                            >
+                                <Plus className="h-4 w-4 mr-1" />
+                                {t("add_material")}
+                            </Button>
                         </CardHeader>
                         <CardContent className="p-0 overflow-x-auto text-sm">
                             <table className="w-full text-left whitespace-nowrap">
                                 <thead className="bg-slate-50 border-b border-slate-100 uppercase text-[10px] font-semibold tracking-wider text-slate-500">
                                     <tr>
                                         <th className="p-3 pl-4">{t("material_type")}</th>
-                                        <th className="p-3">{t("supplier")}</th>
+                                        <th className="p-3">Supplier</th>
+                                        <th className="p-3">Quality</th>
                                         <th className="p-3 text-right">{t("unit_consumption")}</th>
                                         <th className="p-3 text-right">{t("unit_price")}</th>
                                         <th className="p-3 text-center">{t("waste_rate")}</th>
                                         <th className="p-3">Status</th>
                                         <th className="p-3">{t("notes")}</th>
                                         <th className="p-3 text-right pr-4">{t("total")}</th>
+                                        <th className="p-3 pr-4"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {materials.map((mat) => (
+                                    {materials.filter(m => m.material_type !== 'Accessory').map((mat) => (
                                         <tr key={mat.id} className="border-b border-slate-50 hover:bg-slate-50/50">
-                                            <td className="p-3 pl-4">
-                                                <Select defaultValue={mat.material_type}>
-                                                    <SelectTrigger className="h-8 text-xs border-0 bg-transparent p-0 focus:ring-0 shadow-none font-medium text-slate-700">
+                                            <td className="p-2 pl-4">
+                                                <Select value={mat.material_type} onValueChange={(val) => updateMaterial(mat.id, { material_type: val })}>
+                                                    <SelectTrigger className="h-8 text-xs border-slate-200">
                                                         <SelectValue />
                                                     </SelectTrigger>
                                                     <SelectContent>
@@ -390,19 +469,57 @@ export default function CostingFormClient({
                                                         <SelectItem value="Zipper">{t("material_categories.ZIPPER")}</SelectItem>
                                                         <SelectItem value="Label">{t("material_categories.LABEL")}</SelectItem>
                                                         <SelectItem value="Packaging">{t("material_categories.PACKAGING")}</SelectItem>
-                                                        <SelectItem value="Accessory">Accessory</SelectItem>
                                                     </SelectContent>
                                                 </Select>
                                             </td>
-                                            <td className="p-3 text-slate-500">{mat.supplier}</td>
-                                            <td className="p-3 text-right font-mono text-slate-600">{mat.unit_consumption}</td>
-                                            <td className="p-3 text-right font-mono text-slate-600">${mat.unit_price}</td>
-                                            <td className="p-3 text-center">
-                                                <Badge variant="outline" className="bg-white font-mono text-xs">{mat.waste_rate * 100}%</Badge>
+                                            <td className="p-2">
+                                                <Input
+                                                    value={mat.supplier}
+                                                    onChange={e => updateMaterial(mat.id, { supplier: e.target.value })}
+                                                    className="h-8 text-xs w-28"
+                                                />
                                             </td>
-                                            <td className="p-3">
-                                                <Select defaultValue={mat.order_status}>
-                                                    <SelectTrigger className="h-8 text-xs border-0 bg-transparent p-0 focus:ring-0 shadow-none font-medium text-slate-700 w-[100px]">
+                                            <td className="p-2">
+                                                <Input
+                                                    value={mat.quality}
+                                                    onChange={e => updateMaterial(mat.id, { quality: e.target.value })}
+                                                    className="h-8 text-xs w-28"
+                                                    placeholder="Fabric type..."
+                                                />
+                                            </td>
+                                            <td className="p-2 w-24">
+                                                <Input
+                                                    type="number"
+                                                    value={mat.unit_consumption}
+                                                    onChange={e => updateMaterial(mat.id, { unit_consumption: parseFloat(e.target.value) || 0 })}
+                                                    className="h-8 text-xs text-right"
+                                                />
+                                            </td>
+                                            <td className="p-2 w-24">
+                                                <div className="relative">
+                                                    <span className="absolute left-2 top-2 text-xs text-slate-400">$</span>
+                                                    <Input
+                                                        type="number"
+                                                        value={mat.unit_price}
+                                                        onChange={e => updateMaterial(mat.id, { unit_price: parseFloat(e.target.value) || 0 })}
+                                                        className="h-8 text-xs text-right pl-5"
+                                                    />
+                                                </div>
+                                            </td>
+                                            <td className="p-2 w-20">
+                                                <div className="relative">
+                                                    <span className="absolute right-2 top-2 text-xs text-slate-400">%</span>
+                                                    <Input
+                                                        type="number"
+                                                        value={mat.waste_rate * 100}
+                                                        onChange={e => updateMaterial(mat.id, { waste_rate: (parseFloat(e.target.value) || 0) / 100 })}
+                                                        className="h-8 text-xs text-right pr-6"
+                                                    />
+                                                </div>
+                                            </td>
+                                            <td className="p-2 w-32">
+                                                <Select value={mat.order_status} onValueChange={(val) => updateMaterial(mat.id, { order_status: val as ProductMaterial['order_status'] })}>
+                                                    <SelectTrigger className="h-8 text-xs border-slate-200">
                                                         <SelectValue />
                                                     </SelectTrigger>
                                                     <SelectContent>
@@ -412,15 +529,143 @@ export default function CostingFormClient({
                                                     </SelectContent>
                                                 </Select>
                                             </td>
-                                            <td className="p-3 text-slate-400 italic text-xs max-w-[200px] truncate">
-                                                {mat.notes || "-"}
+                                            <td className="p-2 w-32">
+                                                <Input
+                                                    value={mat.notes || ''}
+                                                    onChange={e => updateMaterial(mat.id, { notes: e.target.value })}
+                                                    className="h-8 text-xs"
+                                                    placeholder="Remarks..."
+                                                />
                                             </td>
-                                            <td className="p-3 font-bold text-right pr-4 font-mono text-emerald-700">${mat.total_amount.toFixed(2)}</td>
+                                            <td className="p-2 text-right font-bold text-emerald-700 w-24">
+                                                ${mat.total_amount.toFixed(2)}
+                                            </td>
+                                            <td className="p-2 pr-4 text-right">
+                                                <Button size="icon" variant="ghost" className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50" onClick={() => setMaterials(prev => prev.filter(m => m.id !== mat.id))}>
+                                                    <X className="h-4 w-4" />
+                                                </Button>
+                                            </td>
                                         </tr>
                                     ))}
-                                    {materials.length === 0 && (
+                                    {materials.filter(m => m.material_type !== 'Accessory').length === 0 && (
                                         <tr>
-                                            <td colSpan={7} className="p-8 text-center text-slate-400">No materials recorded.</td>
+                                            <td colSpan={10} className="p-8 text-center text-slate-400">No materials recorded.</td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </CardContent>
+                    </Card>
+
+                    {/* Accessories & Trims Table (Phase 3) */}
+                    <Card className="border-slate-200 shadow-sm">
+                        <CardHeader className="bg-slate-50 border-b border-slate-100 py-4 flex flex-row items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <Package className="h-4 w-4 text-slate-500" />
+                                <CardTitle className="text-sm font-semibold text-slate-700">
+                                    Accessories & Trims (Aksesuarlar)
+                                </CardTitle>
+                            </div>
+                            <Button
+                                size="sm"
+                                variant="default"
+                                onClick={() => {
+                                    const newAcc: ProductMaterial = {
+                                        id: `acc-${Date.now()}`,
+                                        product_id: product.id,
+                                        material_type: 'Accessory',
+                                        supplier: '',
+                                        quality: '',
+                                        unit_consumption: 0,
+                                        unit_price: 0,
+                                        waste_rate: 0,
+                                        total_amount: 0,
+                                        order_status: 'PENDING',
+                                        notes: ''
+                                    };
+                                    setMaterials(prev => [...prev, newAcc]);
+                                }}
+                                className="h-8 shadow-sm bg-emerald-600 hover:bg-emerald-700 text-white"
+                            >
+                                <Plus className="h-4 w-4 mr-1" />
+                                Accessory
+                            </Button>
+                        </CardHeader>
+                        <CardContent className="p-0 overflow-x-auto text-sm">
+                            <table className="w-full text-left whitespace-nowrap">
+                                <thead className="bg-slate-50 border-b border-slate-100 uppercase text-[10px] font-semibold tracking-wider text-slate-500">
+                                    <tr>
+                                        <th className="p-3 pl-4">Accessory Name</th>
+                                        <th className="p-3">Supplier</th>
+                                        <th className="p-3 text-right">Usage Qty</th>
+                                        <th className="p-3 text-right">Unit Price</th>
+                                        <th className="p-3 text-right">Total</th>
+                                        <th className="p-3">Order Status</th>
+                                        <th className="p-3 pr-4"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {materials.filter(m => m.material_type === 'Accessory').map((mat) => (
+                                        <tr key={mat.id} className="border-b border-slate-50 hover:bg-slate-50/50">
+                                            <td className="p-2 pl-4">
+                                                <Input
+                                                    value={mat.quality}
+                                                    onChange={e => updateMaterial(mat.id, { quality: e.target.value })}
+                                                    placeholder="e.g. Button"
+                                                    className="h-8 text-xs"
+                                                />
+                                            </td>
+                                            <td className="p-2">
+                                                <Input
+                                                    value={mat.supplier}
+                                                    onChange={e => updateMaterial(mat.id, { supplier: e.target.value })}
+                                                    className="h-8 text-xs"
+                                                />
+                                            </td>
+                                            <td className="p-2 w-24">
+                                                <Input
+                                                    type="number"
+                                                    value={mat.unit_consumption}
+                                                    onChange={e => updateMaterial(mat.id, { unit_consumption: parseFloat(e.target.value) || 0 })}
+                                                    className="h-8 text-xs text-right"
+                                                />
+                                            </td>
+                                            <td className="p-2 w-24">
+                                                <div className="relative">
+                                                    <span className="absolute left-2 top-2 text-xs text-slate-400">$</span>
+                                                    <Input
+                                                        type="number"
+                                                        value={mat.unit_price}
+                                                        onChange={e => updateMaterial(mat.id, { unit_price: parseFloat(e.target.value) || 0 })}
+                                                        className="h-8 text-xs text-right pl-5"
+                                                    />
+                                                </div>
+                                            </td>
+                                            <td className="p-2 text-right font-bold text-emerald-700 w-24">
+                                                ${mat.total_amount.toFixed(2)}
+                                            </td>
+                                            <td className="p-2 w-36">
+                                                <Select value={mat.order_status} onValueChange={(val) => updateMaterial(mat.id, { order_status: val as ProductMaterial['order_status'] })}>
+                                                    <SelectTrigger className="h-8 text-xs border-slate-200">
+                                                        <SelectValue />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="PENDING">Pending</SelectItem>
+                                                        <SelectItem value="ORDERED">Ordered</SelectItem>
+                                                        <SelectItem value="DELIVERED">Delivered</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </td>
+                                            <td className="p-2 pr-4 text-right">
+                                                <Button size="icon" variant="ghost" className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50" onClick={() => setMaterials(prev => prev.filter(m => m.id !== mat.id))}>
+                                                    <X className="h-4 w-4" />
+                                                </Button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    {materials.filter(m => m.material_type === 'Accessory').length === 0 && (
+                                        <tr>
+                                            <td colSpan={7} className="p-8 text-center text-slate-400">No accessories added yet.</td>
                                         </tr>
                                     )}
                                 </tbody>
@@ -430,11 +675,30 @@ export default function CostingFormClient({
 
                     {/* Labor Cost Table Placeholder */}
                     <Card className="border-slate-200 shadow-sm">
-                        <CardHeader className="bg-slate-50 border-b border-slate-100 py-4">
-                            <CardTitle className="text-sm font-semibold flex items-center gap-2 text-slate-700">
+                        <CardHeader className="bg-slate-50 border-b border-slate-100 py-4 flex flex-row items-center justify-between">
+                            <div className="flex items-center gap-2">
                                 <UserSquare2 className="h-4 w-4 text-slate-500" />
-                                {t("labor_table")}
-                            </CardTitle>
+                                <CardTitle className="text-sm font-semibold text-slate-700">
+                                    {t("labor_table")}
+                                </CardTitle>
+                            </div>
+                            <Button
+                                size="sm"
+                                variant="default"
+                                onClick={() => {
+                                    const newLabor: ProductLaborCost = {
+                                        id: `labor-${Date.now()}`,
+                                        product_id: product.id,
+                                        operation_name: '',
+                                        cost_amount: 0
+                                    };
+                                    setLaborCosts(prev => [...prev, newLabor]);
+                                }}
+                                className="h-8 shadow-sm bg-orange-600 hover:bg-orange-700 text-white"
+                            >
+                                <Plus className="h-4 w-4 mr-1" />
+                                {t("add_labor")}
+                            </Button>
                         </CardHeader>
                         <CardContent className="p-0 text-sm">
                             <table className="w-full text-left">
@@ -447,13 +711,35 @@ export default function CostingFormClient({
                                 <tbody>
                                     {laborCosts.map((labor) => (
                                         <tr key={labor.id} className="border-b border-slate-50 hover:bg-slate-50/50">
-                                            <td className="p-3 pl-4 text-slate-700 font-medium">{labor.operation_name}</td>
-                                            <td className="p-3 pr-4 text-right font-mono text-slate-600">${labor.cost_amount.toFixed(2)}</td>
+                                            <td className="p-2 pl-4">
+                                                <Input
+                                                    value={labor.operation_name}
+                                                    onChange={e => updateLabor(labor.id, { operation_name: e.target.value })}
+                                                    placeholder="Operation name..."
+                                                    className="h-8 text-xs"
+                                                />
+                                            </td>
+                                            <td className="p-2 w-32">
+                                                <div className="relative">
+                                                    <span className="absolute left-2 top-2 text-xs text-slate-400">$</span>
+                                                    <Input
+                                                        type="number"
+                                                        value={labor.cost_amount}
+                                                        onChange={e => updateLabor(labor.id, { cost_amount: parseFloat(e.target.value) || 0 })}
+                                                        className="h-8 text-xs text-right pl-5"
+                                                    />
+                                                </div>
+                                            </td>
+                                            <td className="p-2 pr-4 text-right w-12">
+                                                <Button size="icon" variant="ghost" className="h-8 w-8 text-red-500 hover:text-red-700 hover:bg-red-50" onClick={() => setLaborCosts(prev => prev.filter(l => l.id !== labor.id))}>
+                                                    <X className="h-4 w-4" />
+                                                </Button>
+                                            </td>
                                         </tr>
                                     ))}
                                     {laborCosts.length === 0 && (
                                         <tr>
-                                            <td colSpan={2} className="p-8 text-center text-slate-400">No labor records found.</td>
+                                            <td colSpan={3} className="p-8 text-center text-slate-400">No labor records found.</td>
                                         </tr>
                                     )}
                                 </tbody>
@@ -511,10 +797,10 @@ export default function CostingFormClient({
                         </CardContent>
                     </Card>
 
-                </div>
+                </div >
 
-            </div>
+            </div >
 
-        </div>
+        </div >
     )
 }

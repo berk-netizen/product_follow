@@ -39,7 +39,7 @@ export interface ProductMaterial {
     unit_price: number;
     waste_rate: number;
     total_amount: number;
-    order_status: 'OK' | 'PENDING';
+    order_status: 'OK' | 'PENDING' | 'ORDERED' | 'DELIVERED';
     notes: string | null;
 }
 
