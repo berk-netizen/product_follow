@@ -38,11 +38,14 @@ export const createProductionItem = async (item: Partial<ProductionItem>): Promi
         .single();
 
     if (error) {
-        console.error('Error creating production item:', error);
+        console.error('Supabase error creating production item:', error);
+        // Show the exact error to help diagnose
+        alert(`Supabase Hatası:\nKod: ${error.code}\nMesaj: ${error.message}\nDetay: ${error.details}`);
         return undefined;
     }
     return data as ProductionItem;
 };
+
 
 export const getProductMaterials = async (productId: string): Promise<ProductMaterial[]> => {
     const { data, error } = await supabase
