@@ -21,7 +21,6 @@ import {
 import { DollarSign, Package, TrendingUp, BarChart3 } from "lucide-react"
 
 export default function AnalyticsClient() {
-    const t = useTranslations("Dashboard")
     const tNav = useTranslations("Navigation")
     const [items, setItems] = useState<ProductionItem[]>([])
     const [loading, setLoading] = useState(true)

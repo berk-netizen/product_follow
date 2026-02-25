@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { Calendar, Save, ArrowLeft, Package, UserSquare2, TrendingUp, Clock, Image as ImageIcon, Upload, X, Tag, Info } from "lucide-react"
+import { Calendar, Save, ArrowLeft, Package, UserSquare2, TrendingUp, Clock, Image as ImageIcon, Upload, X, Tag } from "lucide-react"
 import { getDeadlineBadge } from "@/lib/dateUtils"
 import { Label } from "@/components/ui/label"
 
@@ -311,7 +311,7 @@ export default function CostingFormClient({
                                     <Label className="text-[10px] uppercase font-bold text-slate-400 tracking-wider font-sans">{t("fabric_order_status")}</Label>
                                     <Select
                                         value={specs.fabric_order_status}
-                                        onValueChange={(val) => setSpecs({ ...specs, fabric_order_status: val as any })}
+                                        onValueChange={(val) => setSpecs({ ...specs, fabric_order_status: val as 'MANUFACTURER WAREHOUSE' | 'PENDING' | 'ORDERED' | 'DELIVERED' })}
                                     >
                                         <SelectTrigger className="h-9 text-sm bg-slate-50 border-slate-200">
                                             <SelectValue />

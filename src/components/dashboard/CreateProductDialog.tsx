@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useTranslations } from "next-intl"
+
 import { Button } from "@/components/ui/button"
 import {
     Dialog,
@@ -32,7 +32,6 @@ export function CreateProductDialog({ onAdd }: CreateProductDialogProps) {
         planned_qty: 0
     })
 
-    const t = useTranslations("Dashboard")
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
@@ -61,7 +60,7 @@ export function CreateProductDialog({ onAdd }: CreateProductDialogProps) {
                     <DialogHeader>
                         <DialogTitle>Create New Product</DialogTitle>
                         <DialogDescription>
-                            Enter the details of the new production model. It will appear on the Kanban board under 'SAMPLE SEWN'.
+                            Enter the details of the new production model. It will appear on the Kanban board under &apos;SAMPLE SEWN&apos;.
                         </DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
