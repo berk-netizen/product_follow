@@ -37,7 +37,6 @@ export function CreateProductDialog({ onAdd }: CreateProductDialogProps) {
         manufacturer: "",
         target_loading_date: "",
         planned_qty: 0,
-        supplier_type: "" as any,
         delivery_date: ""
     })
 
@@ -53,7 +52,6 @@ export function CreateProductDialog({ onAdd }: CreateProductDialogProps) {
             manufacturer: "",
             target_loading_date: "",
             planned_qty: 0,
-            supplier_type: "",
             delivery_date: ""
         })
     }
@@ -152,21 +150,6 @@ export function CreateProductDialog({ onAdd }: CreateProductDialogProps) {
                                 className="col-span-3 font-mono font-bold h-10 bg-muted/30 border-border"
                                 required
                             />
-                        </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="supplier" className="text-right text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70">
-                                Supplier
-                            </Label>
-                            <Select onValueChange={(val) => setFormData({ ...formData, supplier_type: val })}>
-                                <SelectTrigger className="col-span-3 h-10 bg-muted/30 border-border text-foreground">
-                                    <SelectValue placeholder="Select Supplier" />
-                                </SelectTrigger>
-                                <SelectContent className="bg-popover border-border">
-                                    <SelectItem value="Üretici">Üretici</SelectItem>
-                                    <SelectItem value="Kumaşçı">Kumaşçı</SelectItem>
-                                    <SelectItem value="Aksesuar">Aksesuar</SelectItem>
-                                </SelectContent>
-                            </Select>
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="deliveryDate" className="text-right text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70">

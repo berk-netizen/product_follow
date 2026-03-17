@@ -135,27 +135,27 @@ export default function CostingFormClient({
         <div className="flex flex-col gap-6 pb-20">
 
             {/* Header Actions */}
-            <div className="flex items-center justify-between bg-white p-4 rounded-xl border border-slate-200 shadow-sm sticky top-20 z-10 w-full mb-2">
+            <div className="flex items-center justify-between bg-card p-4 rounded-xl border border-border shadow-sm sticky top-20 z-10 w-full mb-2">
                 <div className="flex items-center gap-4">
-                    <Button variant="ghost" size="icon" onClick={() => router.back()} className="text-slate-500 rounded-full hover:bg-slate-100">
+                    <Button variant="ghost" size="icon" onClick={() => router.back()} className="text-muted-foreground rounded-full hover:bg-muted">
                         <ArrowLeft className="h-5 w-5" />
                     </Button>
                     <div>
                         <div className="flex items-center gap-3">
                             <Input
-                                value={product.model_name}
+                                 value={product.model_name}
                                 onChange={(e) => setProduct({ ...product, model_name: e.target.value })}
-                                className="text-xl font-bold text-slate-900 tracking-tight border-transparent hover:border-slate-200 focus:border-emerald-500 bg-transparent h-auto py-1 px-2 w-64 shadow-none"
+                                className="text-xl font-bold text-foreground tracking-tight border-transparent hover:border-border focus:border-primary bg-transparent h-auto py-1 px-2 w-64 shadow-none"
                             />
                             <Input
                                 value={product.model_code}
                                 onChange={(e) => setProduct({ ...product, model_code: e.target.value })}
-                                className="font-mono text-sm text-slate-500 bg-slate-50 border-slate-200 h-7 w-28 px-2"
+                                className="font-mono text-sm text-muted-foreground bg-muted/50 border-border h-7 w-28 px-2"
                             />
                             <Input
                                 value={product.season}
                                 onChange={(e) => setProduct({ ...product, season: e.target.value })}
-                                className="bg-emerald-50 text-emerald-700 h-7 w-20 px-2 font-semibold text-xs border-transparent focus:border-emerald-500"
+                                className="bg-primary/10 text-primary h-7 w-20 px-2 font-semibold text-xs border-transparent focus:border-primary"
                             />
                             {deadlineBadge && (
                                 <Badge variant={deadlineBadge.variant} className={deadlineBadge.colorClass}>
@@ -165,18 +165,18 @@ export default function CostingFormClient({
                             )}
                         </div>
                         <div className="flex items-center gap-2 mt-1 px-2">
-                            <span className="text-sm text-slate-500">{t("title")}</span>
-                            <span className="text-slate-300">&bull;</span>
+                            <span className="text-sm text-muted-foreground">{t("title")}</span>
+                            <span className="text-border">&bull;</span>
                             <Input
                                 value={product.category}
                                 onChange={(e) => setProduct({ ...product, category: e.target.value })}
-                                className="text-sm text-slate-500 h-6 border-transparent hover:border-slate-200 bg-transparent px-1 w-28 shadow-none"
+                                className="text-sm text-muted-foreground h-6 border-transparent hover:border-border bg-transparent px-1 w-28 shadow-none"
                             />
-                            <span className="text-slate-300">&bull;</span>
+                            <span className="text-border">&bull;</span>
                             <Input
                                 value={product.manufacturer}
                                 onChange={(e) => setProduct({ ...product, manufacturer: e.target.value })}
-                                className="text-sm text-slate-500 h-6 border-transparent hover:border-slate-200 bg-transparent px-1 w-32 shadow-none"
+                                className="text-sm text-muted-foreground h-6 border-transparent hover:border-border bg-transparent px-1 w-32 shadow-none"
                             />
                         </div>
                     </div>
@@ -184,17 +184,17 @@ export default function CostingFormClient({
 
                 <div className="flex items-center gap-4">
                     <Select value={product.status} onValueChange={handleStatusChange}>
-                        <SelectTrigger className="w-[180px] bg-slate-50 border-slate-200 font-medium">
+                        <SelectTrigger className="w-[180px] bg-muted/50 border-border font-medium">
                             <SelectValue placeholder="Status" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="bg-popover border-border">
                             {STATUS_OPTIONS.map(status => (
                                 <SelectItem key={status} value={status}>{tStatus(status.replace('/', '_').replace(' ', '_'))}</SelectItem>
                             ))}
                         </SelectContent>
                     </Select>
 
-                    <Button onClick={handleSave} className="gap-2 bg-kntlgy-blue hover:bg-kntlgy-blue/90 text-white shadow-sm">
+                    <Button onClick={handleSave} className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm rounded-lg px-6 font-semibold">
                         <Save className="h-4 w-4" />
                         {t("save")}
                     </Button>
@@ -206,15 +206,15 @@ export default function CostingFormClient({
                 {/* Left Column: Image & Dates */}
                 <div className="lg:col-span-1 flex flex-col gap-6">
                     {/* Image Upload Box */}
-                    <Card className="border-slate-200 shadow-sm overflow-hidden">
-                        <CardHeader className="bg-slate-50 border-b border-slate-100 py-3">
-                            <CardTitle className="text-xs font-bold uppercase tracking-widest text-slate-500 flex items-center gap-2">
+                    <Card className="border-border shadow-sm overflow-hidden bg-card">
+                        <CardHeader className="bg-muted/30 border-b border-border py-3">
+                            <CardTitle className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
                                 <ImageIcon className="h-3.5 w-3.5" />
                                 Product Visual
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-4">
-                            <div className="relative aspect-square rounded-xl border-2 border-dashed border-slate-200 bg-slate-50/50 flex flex-col items-center justify-center overflow-hidden group">
+                            <div className="relative aspect-square rounded-xl border-2 border-dashed border-border bg-muted/20 flex flex-col items-center justify-center overflow-hidden group">
                                 {imagePreview ? (
                                     <>
                                         <Image src={imagePreview} alt="Preview" fill className="object-cover" />
@@ -241,21 +241,21 @@ export default function CostingFormClient({
                         </CardContent>
                     </Card>
 
-                    <Card className="border-slate-200 shadow-sm">
-                        <CardHeader className="bg-slate-50 border-b border-slate-100 py-4">
-                            <CardTitle className="text-sm font-semibold flex items-center gap-2 text-slate-700">
-                                <Calendar className="h-4 w-4 text-slate-500" />
+                    <Card className="border-border shadow-sm bg-card">
+                        <CardHeader className="bg-muted/30 border-b border-border py-4">
+                            <CardTitle className="text-sm font-semibold flex items-center gap-2 text-foreground">
+                                <Calendar className="h-4 w-4 text-primary" />
                                 {t("dates_tracking")}
                             </CardTitle>
                         </CardHeader>
-                        <CardContent className="p-4 space-y-4">
+                        <CardContent className="p-4 space-y-5">
                             <div className="space-y-2">
-                                <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{t("target_loading_date")}</label>
+                                <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("target_loading_date")}</label>
                                 <Input
                                     type="date"
                                     value={targetLoadingDate}
                                     onChange={(e) => setTargetLoadingDate(e.target.value)}
-                                    className="font-mono text-slate-700 text-sm"
+                                    className="font-mono text-foreground text-sm bg-muted/20 border-border"
                                 />
                             </div>
                             <div className="space-y-2">
@@ -294,22 +294,22 @@ export default function CostingFormClient({
                                     className="font-mono text-slate-700 text-sm"
                                 />
                             </div>
-                            <div className="space-y-2 pt-2 border-t border-slate-100">
-                                <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Planned Qty</label>
+                            <div className="space-y-2 pt-2 border-t border-border">
+                                <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Planned Qty</label>
                                 <Input
                                     type="number"
                                     value={product.planned_qty}
                                     onChange={(e) => setProduct({ ...product, planned_qty: parseInt(e.target.value) || 0 })}
-                                    className="font-bold text-lg text-slate-800 bg-slate-50/50 border-slate-200 font-mono"
+                                    className="font-bold text-lg text-foreground bg-muted/20 border-border font-mono"
                                 />
                             </div>
-                            <div className="space-y-2 pt-2 border-t border-slate-100">
-                                <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{t("received_qty")}</label>
+                            <div className="space-y-2 pt-2 border-t border-border">
+                                <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{t("received_qty")}</label>
                                 <Input
                                     type="number"
                                     value={receivedQty}
                                     onChange={(e) => setReceivedQty(e.target.value)}
-                                    className="font-bold text-lg text-emerald-700 bg-emerald-50/50 border-emerald-200"
+                                    className="font-bold text-lg text-primary bg-primary/5 border-primary/20"
                                 />
                             </div>
                         </CardContent>
@@ -320,21 +320,21 @@ export default function CostingFormClient({
                 <div className="lg:col-span-3 flex flex-col gap-6">
 
                     {/* Material Specifications Card (Phase 3) */}
-                    <Card className="border-slate-200 shadow-sm">
-                        <CardHeader className="bg-white border-b border-slate-100 py-4">
-                            <CardTitle className="text-sm font-semibold flex items-center gap-2 text-slate-700">
-                                <Tag className="h-4 w-4 text-emerald-500" />
+                    <Card className="border-border shadow-sm bg-card">
+                        <CardHeader className="bg-muted/30 border-b border-border py-4">
+                            <CardTitle className="text-sm font-semibold flex items-center gap-2 text-foreground">
+                                <Tag className="h-4 w-4 text-primary" />
                                 {t("material_specs")}
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 <div className="space-y-2">
-                                    <Label className="text-[10px] uppercase font-bold text-slate-400 tracking-wider font-sans">{t("fabric_supplier")}</Label>
+                                    <Label className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider font-sans">{t("fabric_supplier")}</Label>
                                     <Input
                                         value={specs.fabric_supplier}
                                         onChange={(e) => setSpecs({ ...specs, fabric_supplier: e.target.value })}
-                                        className="h-9 text-sm"
+                                        className="h-10 text-sm bg-muted/20 border-border"
                                         placeholder="e.g. SÖKTAŞ"
                                     />
                                 </div>
@@ -383,15 +383,15 @@ export default function CostingFormClient({
                                     </div>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label className="text-[10px] uppercase font-bold text-slate-400 tracking-wider font-sans">{t("fabric_order_status")}</Label>
+                                    <Label className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider font-sans">{t("fabric_order_status")}</Label>
                                     <Select
                                         value={specs.fabric_order_status}
                                         onValueChange={(val) => setSpecs({ ...specs, fabric_order_status: val as 'MANUFACTURER WAREHOUSE' | 'PENDING' | 'ORDERED' | 'DELIVERED' })}
                                     >
-                                        <SelectTrigger className="h-9 text-sm bg-slate-50 border-slate-200">
+                                        <SelectTrigger className="h-10 text-sm bg-muted/20 border-border">
                                             <SelectValue />
                                         </SelectTrigger>
-                                        <SelectContent>
+                                        <SelectContent className="bg-popover border-border">
                                             <SelectItem value="PENDING">{t("fabric_status.PENDING")}</SelectItem>
                                             <SelectItem value="ORDERED">{t("fabric_status.ORDERED")}</SelectItem>
                                             <SelectItem value="MANUFACTURER WAREHOUSE">{t("fabric_status.MANUFACTURER_WAREHOUSE")}</SelectItem>
@@ -404,11 +404,11 @@ export default function CostingFormClient({
                     </Card>
 
                     {/* Materials Table Placeholder */}
-                    <Card className="border-slate-200 shadow-sm">
-                        <CardHeader className="bg-slate-50 border-b border-slate-100 py-4 flex flex-row items-center justify-between">
+                    <Card className="border-border shadow-md bg-card overflow-hidden">
+                        <CardHeader className="bg-muted/40 border-b border-border py-4 flex flex-row items-center justify-between">
                             <div className="flex items-center gap-2">
-                                <Package className="h-4 w-4 text-slate-500" />
-                                <CardTitle className="text-sm font-semibold text-slate-700">
+                                <Package className="h-4 w-4 text-primary" />
+                                <CardTitle className="text-sm font-semibold text-foreground">
                                     {t("materials_table")}
                                 </CardTitle>
                             </div>
@@ -748,26 +748,26 @@ export default function CostingFormClient({
                     </Card>
 
                     {/* Profitability Summary Placeholder */}
-                    <Card className="border-emerald-200 shadow-sm bg-emerald-50/30">
-                        <CardHeader className="border-b border-emerald-100 py-4">
-                            <CardTitle className="text-sm font-semibold flex items-center gap-2 text-emerald-800">
-                                <TrendingUp className="h-4 w-4 text-emerald-600" />
+                    <Card className="border-primary/20 shadow-lg bg-primary/[0.02]">
+                        <CardHeader className="border-b border-primary/10 py-4 bg-primary/5">
+                            <CardTitle className="text-sm font-semibold flex items-center gap-2 text-primary">
+                                <TrendingUp className="h-4 w-4" />
                                 {t("profitability_summary")}
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-6">
                             <div className="flex flex-col gap-5">
                                 <div className="flex justify-between items-center text-sm">
-                                    <span className="text-emerald-700/80 font-medium">{t("total_material_cost")}</span>
-                                    <span className="font-mono text-emerald-900 font-bold">${materials.reduce((acc, m) => acc + m.total_amount, 0).toFixed(2)}</span>
+                                    <span className="text-muted-foreground font-medium">{t("total_material_cost")}</span>
+                                    <span className="font-mono text-foreground font-bold text-base">${materials.reduce((acc, m) => acc + m.total_amount, 0).toFixed(2)}</span>
                                 </div>
                                 <div className="flex justify-between items-center text-sm">
-                                    <span className="text-emerald-700/80 font-medium">{t("total_labor_cost")}</span>
-                                    <span className="font-mono text-emerald-900 font-bold">${laborCosts.reduce((acc, l) => acc + l.cost_amount, 0).toFixed(2)}</span>
+                                    <span className="text-muted-foreground font-medium">{t("total_labor_cost")}</span>
+                                    <span className="font-mono text-foreground font-bold text-base">${laborCosts.reduce((acc, l) => acc + l.cost_amount, 0).toFixed(2)}</span>
                                 </div>
-                                <div className="pt-4 border-t border-emerald-200/50 flex justify-between items-center bg-emerald-100/30 p-3 rounded-lg">
-                                    <span className="text-emerald-800 font-bold">{t("total_unit_cost")}</span>
-                                    <span className="font-mono text-emerald-900 font-black text-lg">
+                                <div className="pt-4 border-t border-primary/20 flex justify-between items-center bg-primary/5 p-4 rounded-xl">
+                                    <span className="text-primary font-bold">{t("total_unit_cost")}</span>
+                                    <span className="font-mono text-primary font-black text-xl">
                                         ${(
                                             materials.reduce((acc, m) => acc + m.total_amount, 0) +
                                             laborCosts.reduce((acc, l) => acc + l.cost_amount, 0)
@@ -776,18 +776,18 @@ export default function CostingFormClient({
                                 </div>
 
                                 <div className="pt-2 space-y-2">
-                                    <label className="text-xs font-semibold text-emerald-800 uppercase tracking-wider">{t("target_selling_price")} ($)</label>
+                                    <label className="text-[10px] font-bold text-primary uppercase tracking-wider">{t("target_selling_price")} ($)</label>
                                     <Input
                                         type="number"
                                         value={product.target_sales_price}
                                         onChange={(e) => setProduct({ ...product, target_sales_price: parseFloat(e.target.value) || 0 })}
-                                        className="font-mono text-lg font-bold border-emerald-300 bg-white"
+                                        className="font-mono text-xl font-bold border-primary/30 bg-card focus:ring-primary shadow-inner h-12"
                                     />
                                 </div>
 
-                                <div className="pt-4 border-t border-emerald-200/50 flex flex-col gap-1 items-center justify-center bg-emerald-600 text-white p-4 rounded-xl shadow-inner mt-2">
-                                    <span className="text-emerald-100 text-sm font-semibold uppercase tracking-wider">{t("profit_margin")}</span>
-                                    <span className="font-mono font-black text-3xl">
+                                <div className="pt-4 border-t border-primary/20 flex flex-col gap-1 items-center justify-center bg-primary text-primary-foreground p-5 rounded-2xl shadow-xl mt-2 transition-transform hover:scale-[1.02] cursor-default">
+                                    <span className="text-primary-foreground/70 text-[10px] font-bold uppercase tracking-widest">{t("profit_margin")}</span>
+                                    <span className="font-mono font-black text-4xl">
                                         {product.target_sales_price > 0
                                             ? (((product.target_sales_price - (materials.reduce((acc, m) => acc + m.total_amount, 0) + laborCosts.reduce((acc, l) => acc + l.cost_amount, 0))) / product.target_sales_price) * 100).toFixed(1)
                                             : "0.0"}%

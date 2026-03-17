@@ -64,17 +64,18 @@ export function ItemCard({ item, isOverlay }: ItemCardProps) {
         : 0;
 
     const handleDraftEmail = (e: React.MouseEvent) => {
-        e.stopPropagation(); // Prevent drag or double click
+        e.stopPropagation();
         
-        let subject = `Sipariş Gecikmesi Hakkında - ${item.model_name}`;
+        const supplierType = item.supplier_type || 'Üretici';
+        let subject = `Sipariş Gecikmesi: ${item.model_name} / ${item.model_code}`;
         let body = "";
 
-        if (item.supplier_type === 'Üretici') {
-            body = `Sayın ${item.manufacturer || 'Üretici Adı'},\n\n${item.model_name} referanslı siparişimizin üretim bandında geciktiğini görüyoruz. Güncel teslimat takvimini rica ederiz.\n\nGecikme: ${delayDays} gün.`;
-        } else if (item.supplier_type === 'Kumaşçı') {
-            body = `Sayın ilgili,\n\n${item.model_code} için termin süresi ${delayDays} gün geçmiştir. Kesim planımızın aksamaması için acil dönüş bekliyoruz.`;
-        } else if (item.supplier_type === 'Aksesuar') {
-            body = `Fermuar/Düğme sevkiyatındaki gecikme paketleme aşamasını durdurmuştur. ${item.model_name} ürünleri için aksesuarların ivedilikle gönderilmesini rica ederiz.`;
+        if (supplierType === 'Üretici') {
+            body = `Sayın ${item.manufacturer || 'İlgili'},\n\n${item.model_name} (${item.model_code}) referanslı siparişimizin üretim aşamasında geciktiğini tespit ettik. \n\nHedef Tarih: ${targetDateFormatted}\nGecikme: ${delayDays} gün.\n\nGüncel üretim durumu ve kesin sevkiyat tarihi hakkında acil bilgi rica ederiz.\n\nİyi çalışmalar.`;
+        } else if (supplierType === 'Kumaşçı') {
+            body = `Sayın ${item.fabric_supplier || 'İlgili'},\n\n${item.model_code} kodlu ürünümüz için beklediğimiz kumaşın termin süresi ${delayDays} gün aşılmıştır. Kesim planımızın daha fazla aksamaması için sevkiyatın bugün gerçekleşmesini rica ederiz.\n\nBilgi bekliyoruz.`;
+        } else if (supplierType === 'Aksesuar') {
+            body = `Sayın İlgili,\n\n${item.model_name} siparişi için gerekli olan aksesuarların (Fermuar/Düğme/Etiket) gecikmesi paketleme aşamasını durdurmuştur. Ürünlerin ivedilikle tarafımıza ulaştırılmasını rica ederiz.\n\nTeşekkürler.`;
         } else {
             body = `${item.model_name} siparişinde ${delayDays} günlük bir gecikme yaşanmaktadır. Durum güncellemesi rica ederiz.`;
         }
@@ -157,13 +158,13 @@ export function ItemCard({ item, isOverlay }: ItemCardProps) {
                         
                         {/* Stock Status Indicator */}
                         <div className="flex items-center gap-2">
-                            {isDelayed && item.supplier_type && (
+                            {isDelayed && (
                                 <button 
                                     onClick={handleDraftEmail}
-                                    className="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 p-1 rounded-md transition-colors border border-emerald-500/20"
+                                    className="bg-primary hover:bg-primary/90 text-white p-1.5 rounded-lg transition-all shadow-sm flex items-center justify-center group"
                                     title="E-posta Taslağı Oluştur"
                                 >
-                                    <Mail className="w-3 h-3" />
+                                    <Mail className="w-3.5 h-3.5" />
                                 </button>
                             )}
                             {item.fabric_order_status === 'DELIVERED' || item.status === 'IN WAREHOUSE' || item.status === 'SHIPPED' ? (

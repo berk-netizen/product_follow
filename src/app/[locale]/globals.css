@@ -33,25 +33,25 @@
     --radius: 0.75rem;
   }
 
-  /* ─── DARK MODE (Zinc-950 based) ─────────────────── */
+  /* ─── DARK MODE (Strict Zinc Overhaul) ─────────── */
   .dark {
-    --background: 240 10% 3.9%;  /* zinc-950 */
-    --foreground: 0 0% 98%;      /* zinc-100 */
-    --card: 240 10% 3.9%;        /* zinc-950/900 */
+    --background: 240 10% 3.9%;   /* #09090b (zinc-950) */
+    --foreground: 0 0% 98%;       /* #fafafa (zinc-50) */
+    --card: 240 5.9% 6%;         /* #18181b (zinc-900) */
     --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
+    --popover: 240 5.9% 6%;
     --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
-    --secondary: 240 3.7% 15.9%;
+    --primary: 217 91% 60%;      /* Professional Blue */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 3.7% 15.9%; /* #27272a (zinc-800) */
     --secondary-foreground: 0 0% 98%;
     --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%; /* zinc-400 */
+    --muted-foreground: 240 5% 64.9%;
     --accent: 240 3.7% 15.9%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;    /* zinc-800 */
+    --border: 240 3.7% 15.9%;    /* #27272a (zinc-800) */
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 83.9%;
   }

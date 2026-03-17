@@ -12,8 +12,8 @@ interface KanbanColumnProps {
 
 export function KanbanColumn({ title, items }: KanbanColumnProps) {
     return (
-        <div className="flex flex-col gap-3 min-w-[320px] max-w-[320px] w-full shrink-0 bg-muted/30 backdrop-blur-sm rounded-2xl p-4 h-full pb-6 border border-border shadow-sm">
-            <div className="flex items-center justify-between pb-3 border-b border-border/60 mb-2">
+        <div className="flex flex-col gap-3 min-w-[320px] max-w-[320px] w-full shrink-0 rounded-2xl p-4 h-full pb-6 border border-border/40 shadow-none">
+            <div className="flex items-center justify-between pb-3 border-b border-border mb-2">
                 <h3 className="font-semibold text-xs text-muted-foreground uppercase tracking-wider">{title}</h3>
                 <Badge variant="secondary" className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-background border border-border text-foreground">
                     {items.length}
