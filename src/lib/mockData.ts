@@ -31,9 +31,16 @@ export const getProductionItemById = async (id: string): Promise<ProductionItem 
 };
 
 export const createProductionItem = async (item: Partial<ProductionItem>): Promise<ProductionItem | undefined> => {
+    // Ensure new fields have defaults or null if not provided
+    const itemToInsert = {
+        delivery_date: null,
+        supplier_type: null,
+        ...item
+    };
+
     const { data, error } = await supabase
         .from('production_items')
-        .insert([item])
+        .insert([itemToInsert])
         .select()
         .single();
 

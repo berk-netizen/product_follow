@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ProductionItem, Status } from "@/types";
 import { useTranslations } from "next-intl";
+import { motion } from "framer-motion";
 import {
     DndContext,
     DragOverlay,
@@ -111,15 +112,23 @@ export default function KanbanBoard({ initialItems }: KanbanBoardProps) {
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
         >
-            <div className="flex gap-4 overflow-x-auto pb-4 h-full min-h-[500px] snap-x">
-                {STATUS_COLUMNS.map((status) => (
-                    <KanbanColumn
-                        key={status}
-                        status={status}
-                        title={t(status.replace('/', '_').replace(' ', '_'))} // matching translation keys
-                        items={items.filter((item) => item.status === status)}
-                    />
-                ))}
+            <div className="relative w-full h-full min-h-[500px]">
+                <motion.div 
+                    className="flex gap-4 pb-4 h-full cursor-grab active:cursor-grabbing"
+                    drag="x"
+                    dragConstraints={{ right: 0, left: -(STATUS_COLUMNS.length * 336) + (typeof window !== 'undefined' ? window.innerWidth : 1200) - 100 }}
+                    dragElastic={0.1}
+                    dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }}
+                >
+                    {STATUS_COLUMNS.map((status) => (
+                        <KanbanColumn
+                            key={status}
+                            status={status}
+                            title={t(status.replace('/', '_').replace(' ', '_'))} // matching translation keys
+                            items={items.filter((item) => item.status === status)}
+                        />
+                    ))}
+                </motion.div>
             </div>
 
             <DragOverlay>

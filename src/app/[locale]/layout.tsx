@@ -1,20 +1,19 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import Link from "next/link";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-playfair",
 });
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
 });
 
 export const metadata: Metadata = {
@@ -37,22 +36,22 @@ export default async function RootLayout({
   return (
     <html lang={locale}>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-slate-50 min-h-screen`}
+        className={`${playfair.variable} ${inter.variable} font-sans antialiased min-h-screen selection:bg-emerald-500/30`}
       >
         <NextIntlClientProvider messages={messages}>
           <div className="flex flex-col min-h-screen">
-            <header className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-10 w-full shadow-sm">
+            <header className="bg-background/40 backdrop-blur-md border-b border-white/10 px-6 py-4 flex items-center justify-between sticky top-0 z-50 w-full shadow-sm">
               <div className="flex items-center gap-8">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded bg-kntlgy-blue flex items-center justify-center text-white font-bold text-lg">K</div>
-                  <h1 className="text-xl font-bold tracking-tight text-kntlgy-blue">KNTLGY</h1>
+                  <div className="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold text-lg shadow-[0_0_15px_rgba(16,185,129,0.2)]">K</div>
+                  <h1 className="text-xl font-bold tracking-tight text-white font-playfair">KNTLGY</h1>
                 </div>
 
                 <nav className="hidden md:flex items-center gap-6">
-                  <Link href={`/${locale}`} className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">
+                  <Link href={`/${locale}`} className="text-sm font-medium text-slate-300 hover:text-white transition-colors">
                     Dashboard
                   </Link>
-                  <Link href={`/${locale}/analytics`} className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">
+                  <Link href={`/${locale}/analytics`} className="text-sm font-medium text-slate-300 hover:text-white transition-colors">
                     Analytics
                   </Link>
                 </nav>

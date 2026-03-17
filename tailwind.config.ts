@@ -9,6 +9,10 @@ const config: Config = {
 	],
 	theme: {
 		extend: {
+			fontFamily: {
+				sans: ["var(--font-inter)", "sans-serif"],
+				playfair: ["var(--font-playfair)", "serif"],
+			},
 			colors: {
 				kntlgy: {
 					blue: '#002D72',

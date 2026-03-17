@@ -27,6 +27,8 @@ export interface ProductionItem {
     target_sales_price: number;
     final_sales_price_tl: number;
     created_at: string;
+    delivery_date: string | null;
+    supplier_type: 'Üretici' | 'Kumaşçı' | 'Aksesuar' | null;
 }
 
 export interface ProductMaterial {

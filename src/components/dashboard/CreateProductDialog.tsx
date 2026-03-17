@@ -12,6 +12,13 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ProductionItem } from "@/types"
@@ -29,7 +36,9 @@ export function CreateProductDialog({ onAdd }: CreateProductDialogProps) {
         model_name: "",
         manufacturer: "",
         target_loading_date: "",
-        planned_qty: 0
+        planned_qty: 0,
+        supplier_type: "" as any,
+        delivery_date: ""
     })
 
 
@@ -43,7 +52,9 @@ export function CreateProductDialog({ onAdd }: CreateProductDialogProps) {
             model_name: "",
             manufacturer: "",
             target_loading_date: "",
-            planned_qty: 0
+            planned_qty: 0,
+            supplier_type: "",
+            delivery_date: ""
         })
     }
 
@@ -140,6 +151,33 @@ export function CreateProductDialog({ onAdd }: CreateProductDialogProps) {
                                 onChange={(e) => setFormData({ ...formData, planned_qty: parseInt(e.target.value) || 0 })}
                                 className="col-span-3 font-mono font-bold"
                                 required
+                            />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="supplier" className="text-right text-xs uppercase tracking-wider text-slate-500">
+                                Tedarikçi Tipi
+                            </Label>
+                            <Select onValueChange={(val) => setFormData({ ...formData, supplier_type: val })}>
+                                <SelectTrigger className="col-span-3 text-slate-700">
+                                    <SelectValue placeholder="Tedarikçi Seçin" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="Üretici">Üretici</SelectItem>
+                                    <SelectItem value="Kumaşçı">Kumaşçı</SelectItem>
+                                    <SelectItem value="Aksesuar">Aksesuar</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="deliveryDate" className="text-right text-xs uppercase tracking-wider text-slate-500">
+                                Teslimat Tar.
+                            </Label>
+                            <Input
+                                id="deliveryDate"
+                                type="date"
+                                value={formData.delivery_date}
+                                onChange={(e) => setFormData({ ...formData, delivery_date: e.target.value })}
+                                className="col-span-3 font-mono text-slate-700"
                             />
                         </div>
                     </div>

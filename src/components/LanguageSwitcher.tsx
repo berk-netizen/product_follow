@@ -20,7 +20,7 @@ export default function LanguageSwitcher() {
     };
 
     return (
-        <Button variant="outline" size="sm" onClick={handleLocaleChange} className="flex items-center gap-2">
+        <Button variant="ghost" size="sm" onClick={handleLocaleChange} className="flex items-center gap-2 text-slate-300 hover:text-white hover:bg-white/10 transition-colors">
             <Globe className="h-4 w-4" />
             <span>{locale === 'en' ? t('en') : t('tr')}</span>
         </Button>
