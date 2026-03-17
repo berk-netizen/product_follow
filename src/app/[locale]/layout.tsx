@@ -4,6 +4,8 @@ import "./globals.css";
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import Link from "next/link";
 
 const playfair = Playfair_Display({
@@ -34,11 +36,12 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale}>
+    <html lang={locale} suppressHydrationWarning>
       <body
         className={`${playfair.variable} ${inter.variable} font-sans antialiased min-h-screen selection:bg-emerald-500/30`}
       >
-        <NextIntlClientProvider messages={messages}>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+          <NextIntlClientProvider messages={messages}>
           <div className="flex flex-col min-h-screen">
             <header className="bg-background/40 backdrop-blur-md border-b border-white/10 px-6 py-4 flex items-center justify-between sticky top-0 z-50 w-full shadow-sm">
               <div className="flex items-center gap-8">
@@ -57,6 +60,7 @@ export default async function RootLayout({
                 </nav>
               </div>
               <div className="flex items-center gap-4">
+                <ThemeToggle />
                 <LanguageSwitcher />
               </div>
             </header>
@@ -64,7 +68,8 @@ export default async function RootLayout({
               {children}
             </main>
           </div>
-        </NextIntlClientProvider>
+          </NextIntlClientProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
