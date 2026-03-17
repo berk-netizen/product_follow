@@ -1,3 +1,6 @@
+// Force dynamic rendering - this page requires env vars at runtime
+export const dynamic = 'force-dynamic';
+
 import { getProductionItemById, getProductMaterials, getProductLaborCosts } from "@/lib/mockData";
 import { notFound } from "next/navigation";
 import CostingFormClient from "@/components/costing/CostingFormClient";
