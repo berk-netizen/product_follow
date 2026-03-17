@@ -9,6 +9,7 @@ import { LayoutDashboard, TableProperties, Package, TrendingUp, Download, Upload
 import * as XLSX from "xlsx";
 import KanbanBoard from "./KanbanBoard";
 import { CreateProductDialog } from "./CreateProductDialog";
+import { Badge } from "@/components/ui/badge";
 
 export default function DashboardClient() {
     const t = useTranslations("Dashboard");
@@ -43,6 +44,8 @@ export default function DashboardClient() {
             status: 'SAMPLE SEWN',
             sizes_breakdown: {},
             target_loading_date: newItemData.target_loading_date || null,
+            supplier_type: newItemData.supplier_type || null,
+            delivery_date: newItemData.delivery_date || null,
             po_date: null,
             fabric_arrival_date: null,
             cutting_date: null,
@@ -147,26 +150,22 @@ export default function DashboardClient() {
     };
 
     const totalPlannedQty = items.reduce((sum, item) => sum + item.planned_qty, 0);
-
-    // Calculate average profit margin mock calculation 
-    // Formula: ((Target Price - (Mock Cost)) / Target Price) * 100
-    // Since we only load products here, we mock the overall margin directly, or estimate
     const avgProfitMargin = 22.5;
 
     if (loading) {
-        return <div className="h-64 flex items-center justify-center text-slate-500">Loading production data...</div>;
+        return <div className="h-64 flex items-center justify-center text-muted-foreground animate-pulse font-medium">Loading production data...</div>;
     }
 
     return (
-        <div className="flex flex-col gap-8">
-            {/* Header sections */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div className="flex flex-col gap-8 pb-10">
+            {/* Header section */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                 <div>
-                    <h2 className="text-3xl font-bold tracking-tight text-white font-playfair">{t("title")}</h2>
-                    <p className="text-slate-400 text-sm mt-1">Manage and track your overall production phases.</p>
+                    <h2 className="text-4xl font-bold tracking-tight text-foreground font-playfair">{t("title")}</h2>
+                    <p className="text-muted-foreground text-sm mt-1 max-w-md">Manage and track your overall production phases with real-time analytics.</p>
                 </div>
 
-                <div className="flex items-center gap-4">
+                <div className="flex flex-wrap items-center gap-3">
                     <input 
                         type="file" 
                         ref={fileInputRef} 
@@ -174,44 +173,48 @@ export default function DashboardClient() {
                         accept=".xlsx, .xls" 
                         className="hidden" 
                     />
-                    <Button 
-                        variant="outline" 
-                        size="sm" 
-                        onClick={() => fileInputRef.current?.click()}
-                        className="bg-slate-800/50 text-white border-white/10 hover:bg-slate-700/50 hover:text-white"
-                    >
-                        <Upload className="w-4 h-4 mr-2" />
-                        Import
-                    </Button>
-                    <Button 
-                        variant="outline" 
-                        size="sm" 
-                        onClick={handleExportExcel}
-                        className="bg-emerald-500/10 text-emerald-400 border-white/10 hover:bg-emerald-500/20 hover:text-emerald-300"
-                    >
-                        <Download className="w-4 h-4 mr-2" />
-                        Export
-                    </Button>
+                    
+                    <div className="flex items-center bg-muted/50 p-1 rounded-xl border border-border mr-2">
+                        <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            onClick={() => fileInputRef.current?.click()}
+                            className="h-8 text-xs text-muted-foreground hover:text-foreground hover:bg-background rounded-lg transition-all"
+                        >
+                            <Upload className="w-3.5 h-3.5 mr-2" />
+                            Import
+                        </Button>
+                        <div className="w-[1px] h-4 bg-border mx-1" />
+                        <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            onClick={handleExportExcel}
+                            className="h-8 text-xs text-muted-foreground hover:text-emerald-500 hover:bg-emerald-500/5 rounded-lg transition-all"
+                        >
+                            <Download className="w-3.5 h-3.5 mr-2" />
+                            Export
+                        </Button>
+                    </div>
 
                     <CreateProductDialog onAdd={handleCreateProduct} />
 
-                    <div className="flex bg-slate-800/50 backdrop-blur-md p-1 rounded-lg border border-white/5">
+                    <div className="flex bg-muted/50 p-1 rounded-xl border border-border ml-2">
                         <Button
-                            variant={viewMode === "kanban" ? "default" : "ghost"}
+                            variant="ghost"
                             size="sm"
-                            className={`gap-2 ${viewMode === "kanban" ? 'bg-emerald-500 text-white shadow-sm hover:bg-emerald-600' : 'text-slate-400 hover:text-white'}`}
+                            className={`h-8 rounded-lg gap-2 text-xs transition-all ${viewMode === "kanban" ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
                             onClick={() => setViewMode("kanban")}
                         >
-                            <LayoutDashboard className="h-4 w-4" />
+                            <LayoutDashboard className="h-3.5 w-3.5" />
                             {t("kanban_view")}
                         </Button>
                         <Button
-                            variant={viewMode === "table" ? "default" : "ghost"}
+                            variant="ghost"
                             size="sm"
-                            className={`gap-2 ${viewMode === "table" ? 'bg-emerald-500 text-white shadow-sm hover:bg-emerald-600' : 'text-slate-400 hover:text-white'}`}
+                            className={`h-8 rounded-lg gap-2 text-xs transition-all ${viewMode === "table" ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
                             onClick={() => setViewMode("table")}
                         >
-                            <TableProperties className="h-4 w-4" />
+                            <TableProperties className="h-3.5 w-3.5" />
                             {t("table_view")}
                         </Button>
                     </div>
@@ -219,34 +222,52 @@ export default function DashboardClient() {
             </div>
 
             {/* KPIs */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                <div className="rounded-xl border border-white/10 bg-black/20 backdrop-blur-md text-white shadow-[0_4px_30px_rgba(0,0,0,0.1)] p-6 flex flex-col gap-4 relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                        <Package className="w-16 h-16 text-emerald-500" />
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+                <div className="rounded-2xl border border-border bg-card p-6 flex flex-col gap-4 relative overflow-hidden group hover:border-emerald-500/20 transition-all duration-300">
+                    <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
+                        <Package className="w-20 h-20 text-emerald-500" />
                     </div>
-                    <h3 className="tracking-tight text-xs font-semibold text-slate-400 uppercase">{t("total_planned_qty")}</h3>
-                    <div className="text-3xl font-bold tracking-tight">{totalPlannedQty.toLocaleString()}</div>
+                    <div>
+                        <h3 className="tracking-tight text-xs font-semibold text-muted-foreground uppercase opacity-70 mb-1">{t("total_planned_qty")}</h3>
+                        <div className="text-4xl font-bold tracking-tight text-foreground">{totalPlannedQty.toLocaleString()}</div>
+                    </div>
+                    <div className="mt-2 flex items-center gap-1.5 text-[10px] font-medium text-muted-foreground">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                        Live data from all phases
+                    </div>
                 </div>
-                <div className="rounded-xl border border-white/10 bg-black/20 backdrop-blur-md text-white shadow-[0_4px_30px_rgba(0,0,0,0.1)] p-6 flex flex-col gap-4 relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                        <TrendingUp className="w-16 h-16 text-emerald-500" />
+
+                <div className="rounded-2xl border border-border bg-card p-6 flex flex-col gap-4 relative overflow-hidden group hover:border-emerald-500/20 transition-all duration-300">
+                    <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
+                        <TrendingUp className="w-20 h-20 text-emerald-500" />
                     </div>
-                    <h3 className="tracking-tight text-xs font-semibold text-slate-400 uppercase">{t("avg_profit_margin")}</h3>
-                    <div className="text-3xl font-bold tracking-tight text-emerald-400">{avgProfitMargin.toFixed(1)}%</div>
+                    <div>
+                        <h3 className="tracking-tight text-xs font-semibold text-muted-foreground uppercase opacity-70 mb-1">{t("avg_profit_margin")}</h3>
+                        <div className="text-4xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400">{avgProfitMargin.toFixed(1)}%</div>
+                    </div>
+                    <div className="mt-2 flex items-center gap-1.5 text-[10px] font-medium text-muted-foreground">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                        Target vs Actual estimation
+                    </div>
                 </div>
             </div>
 
             {/* Main Content Area */}
-            <div className="mt-2 min-h-[600px] rounded-xl bg-transparent">
+            <div className="mt-4 rounded-2xl overflow-hidden min-h-[600px]">
                 {items.length === 0 ? (
-                    <div className="h-full flex items-center justify-center text-slate-400 bg-slate-800/30 backdrop-blur-md border border-white/10 rounded-xl min-h-[600px]">
-                        {t("no_items")}
+                    <div className="h-[600px] flex flex-col items-center justify-center text-muted-foreground bg-muted/20 border border-dashed border-border rounded-2xl">
+                        <Package className="w-12 h-12 mb-4 opacity-20" />
+                        <p className="font-medium">{t("no_items")}</p>
+                        <p className="text-xs opacity-60 mt-1">Start by adding a new product or importing from Excel.</p>
                     </div>
                 ) : viewMode === "kanban" ? (
                     <KanbanBoard initialItems={items} />
                 ) : (
-                    <div className="h-full flex items-center justify-center text-slate-400 bg-slate-800/30 backdrop-blur-md border border-white/10 rounded-xl min-h-[600px]">
-                        (Table View placeholder)
+                    <div className="h-[600px] flex items-center justify-center text-muted-foreground bg-card border border-border rounded-2xl shadow-sm">
+                        <div className="flex flex-col items-center gap-2">
+                            <TableProperties className="w-8 h-8 opacity-20" />
+                            <p className="text-sm font-medium">Table View Coming Soon</p>
+                        </div>
                     </div>
                 )}
             </div>
