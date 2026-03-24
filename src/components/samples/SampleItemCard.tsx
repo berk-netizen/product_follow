@@ -84,7 +84,7 @@ export function SampleItemCard({ item, isOverlay, onDelete, onSendToProduction, 
                 )}
 
                 {/* Cover Image */}
-                <div className="relative w-full h-28 overflow-hidden border-b border-border/50 bg-zinc-800/20 flex flex-col items-center justify-center">
+                <div className="relative w-full h-28 overflow-hidden border-b border-border/50 bg-muted/30 flex flex-col items-center justify-center">
                     {displayImage ? (
                         <Image
                             src={displayImage}
@@ -93,9 +93,9 @@ export function SampleItemCard({ item, isOverlay, onDelete, onSendToProduction, 
                             className="object-cover transition-transform group-hover:scale-105 duration-500"
                         />
                     ) : (
-                        <div className="flex flex-col items-center justify-center text-zinc-700/50">
-                            <ImageIcon className="w-6 h-6 mb-1 opacity-30" />
-                            <span className="text-[9px] font-bold uppercase tracking-wider opacity-30">No Image</span>
+                        <div className="flex flex-col items-center justify-center text-muted-foreground/30">
+                            <ImageIcon className="w-6 h-6 mb-1 opacity-20" />
+                            <span className="text-[9px] font-bold uppercase tracking-wider opacity-20 italic">No Image</span>
                         </div>
                     )}
                 </div>

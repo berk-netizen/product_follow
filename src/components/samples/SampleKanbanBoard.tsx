@@ -106,17 +106,25 @@ export default function SampleKanbanBoard({ initialItems }: SampleKanbanBoardPro
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
         >
-            {/* Board background: Zinc-950 */}
+            {/* Board Background: Theme-aware bg-muted/20 */}
             <div
-                className="w-full rounded-2xl"
-                style={{ background: '#09090b', padding: '12px 12px 32px 12px' }}
+                className="w-full rounded-2xl bg-muted/20 border border-border/40"
+                style={{ padding: '16px 16px 32px 16px' }}
             >
+                {/* Trello-style scrolling with strict CSS */}
                 <div
-                    className="flex gap-6 overflow-x-auto scrollbar-hide"
-                    style={{ paddingBottom: '8px' }}
+                    className="!flex !overflow-x-auto gap-6 scrollbar-hide"
+                    style={{ 
+                        paddingBottom: '24px',
+                        WebkitOverflowScrolling: 'touch',
+                        scrollbarWidth: 'thin'
+                    }}
                 >
                     {SAMPLE_COLUMNS.map((col) => (
-                        <div key={col.status} style={{ minWidth: 320, maxWidth: 350, flex: '0 0 320px' }}>
+                        <div 
+                            key={col.status} 
+                            className="!shrink-0 !min-w-[300px] !max-w-[320px] w-[320px]"
+                        >
                             <SampleKanbanColumn
                                 status={col.status}
                                 title={col.title}
