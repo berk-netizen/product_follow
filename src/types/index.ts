@@ -1,7 +1,10 @@
 export type Status = 'SAMPLE SEWN' | 'WAITING FABRIC' | 'IN CUTTING' | 'IN SEWING' | 'IRON/PACK' | 'IN WAREHOUSE' | 'SHIPPED';
+export type SampleStatus = 'NUMUNE TALEP' | 'DİKİM AŞAMASINDA' | 'MÜŞTERİYE GÖNDERİLDİ' | 'REVİZE İSTENDİ' | 'ONAYLANDI / ÜRETİME HAZIR';
 
 export interface ProductionItem {
     id: string;
+    is_sample?: boolean;
+    sample_status?: SampleStatus | null;
     season: string;
     model_code: string;
     model_name: string;
