@@ -34,7 +34,6 @@ export const createProductionItem = async (item: Partial<ProductionItem>): Promi
     // Ensure new fields have defaults or null if not provided
     const itemToInsert = {
         delivery_date: null,
-        supplier_type: null,
         ...item
     };
 
@@ -50,7 +49,19 @@ export const createProductionItem = async (item: Partial<ProductionItem>): Promi
         alert(`Supabase Hatası:\nKod: ${error.code}\nMesaj: ${error.message}\nDetay: ${error.details}`);
         return undefined;
     }
-    return data as ProductionItem;
+};
+
+export const deleteProduct = async (id: string): Promise<boolean> => {
+    const { error } = await supabase
+        .from('production_items')
+        .delete()
+        .eq('id', id);
+
+    if (error) {
+        console.error('Error deleting product:', error);
+        return false;
+    }
+    return true;
 };
 
 

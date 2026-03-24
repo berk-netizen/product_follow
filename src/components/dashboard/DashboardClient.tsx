@@ -44,7 +44,6 @@ export default function DashboardClient() {
             status: 'SAMPLE SEWN',
             sizes_breakdown: {},
             target_loading_date: newItemData.target_loading_date || null,
-            supplier_type: newItemData.supplier_type || null,
             delivery_date: newItemData.delivery_date || null,
             po_date: null,
             fabric_arrival_date: null,
@@ -94,7 +93,6 @@ export default function DashboardClient() {
             "Durum": item.status,
             "Planlanan Adet": item.planned_qty,
             "Hedef Satış Fiyatı": item.target_sales_price,
-            "Tedarikçi Tipi": item.supplier_type || '',
             "Teslimat Tarihi": item.delivery_date || '',
             "Kumaş Durumu": item.fabric_order_status
         }));
@@ -129,7 +127,6 @@ export default function DashboardClient() {
                         status: row["Durum"] || "SAMPLE SEWN",
                         planned_qty: Number(row["Planlanan Adet"]) || 0,
                         target_sales_price: Number(row["Hedef Satış Fiyatı"]) || 0,
-                        supplier_type: row["Tedarikçi Tipi"] || null,
                         delivery_date: row["Teslimat Tarihi"] || null,
                         fabric_order_status: row["Kumaş Durumu"] || "PENDING",
                     };

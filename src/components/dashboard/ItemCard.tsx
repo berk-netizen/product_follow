@@ -13,14 +13,15 @@ import { format, differenceInDays } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
 import { getDeadlineBadge, getMaterialAlertBadge } from "@/lib/dateUtils";
-import { Mail } from "lucide-react";
+import { Mail, Trash2 } from "lucide-react";
 
 interface ItemCardProps {
     item: ProductionItem;
     isOverlay?: boolean;
+    onDelete?: (id: string) => void;
 }
 
-export function ItemCard({ item, isOverlay }: ItemCardProps) {
+export function ItemCard({ item, isOverlay, onDelete }: ItemCardProps) {
     const router = useRouter();
     const locale = useLocale();
 
@@ -66,22 +67,21 @@ export function ItemCard({ item, isOverlay }: ItemCardProps) {
     const handleDraftEmail = (e: React.MouseEvent) => {
         e.stopPropagation();
         
-        const supplierType = item.supplier_type || 'Üretici';
+        // Default to Üretici template since supplier_type is removed from DB
         let subject = `Sipariş Gecikmesi: ${item.model_name} / ${item.model_code}`;
-        let body = "";
-
-        if (supplierType === 'Üretici') {
-            body = `Sayın ${item.manufacturer || 'İlgili'},\n\n${item.model_name} (${item.model_code}) referanslı siparişimizin üretim aşamasında geciktiğini tespit ettik. \n\nHedef Tarih: ${targetDateFormatted}\nGecikme: ${delayDays} gün.\n\nGüncel üretim durumu ve kesin sevkiyat tarihi hakkında acil bilgi rica ederiz.\n\nİyi çalışmalar.`;
-        } else if (supplierType === 'Kumaşçı') {
-            body = `Sayın ${item.fabric_supplier || 'İlgili'},\n\n${item.model_code} kodlu ürünümüz için beklediğimiz kumaşın termin süresi ${delayDays} gün aşılmıştır. Kesim planımızın daha fazla aksamaması için sevkiyatın bugün gerçekleşmesini rica ederiz.\n\nBilgi bekliyoruz.`;
-        } else if (supplierType === 'Aksesuar') {
-            body = `Sayın İlgili,\n\n${item.model_name} siparişi için gerekli olan aksesuarların (Fermuar/Düğme/Etiket) gecikmesi paketleme aşamasını durdurmuştur. Ürünlerin ivedilikle tarafımıza ulaştırılmasını rica ederiz.\n\nTeşekkürler.`;
-        } else {
-            body = `${item.model_name} siparişinde ${delayDays} günlük bir gecikme yaşanmaktadır. Durum güncellemesi rica ederiz.`;
-        }
+        let body = `Sayın ${item.manufacturer || 'İlgili'},\n\n${item.model_name} (${item.model_code}) referanslı siparişimizin üretim aşamasında geciktiğini tespit ettik. \n\nHedef Tarih: ${targetDateFormatted}\nGecikme: ${delayDays} gün.\n\nGüncel üretim durumu ve kesin sevkiyat tarihi hakkında acil bilgi rica ederiz.\n\nİyi çalışmalar.`;
 
         const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
         window.location.href = mailtoLink;
+    };
+
+    const handleDeleteClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (window.confirm("Are you sure you want to delete this product?")) {
+            if (onDelete) {
+                onDelete(item.id);
+            }
+        }
     };
 
     return (
@@ -104,6 +104,15 @@ export function ItemCard({ item, isOverlay }: ItemCardProps) {
             )}>
                 {isDelayed && (
                     <div className="absolute top-0 right-0 left-0 h-1 bg-destructive pointer-events-none z-10" />
+                )}
+                {!isOverlay && onDelete && (
+                    <button
+                        onClick={handleDeleteClick}
+                        className="absolute top-2 right-2 p-1.5 text-muted-foreground/50 hover:text-red-500 hover:bg-red-500/10 rounded-md transition-all z-20"
+                        title="Delete Product"
+                    >
+                        <Trash2 className="w-4 h-4" />
+                    </button>
                 )}
                 {item.image_url && (
                     <div className="relative w-full h-36 overflow-hidden border-b border-border/50">

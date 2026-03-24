@@ -3,16 +3,16 @@
 import Image from "next/image"
 
 import { useState } from "react"
-import { useTranslations } from "next-intl"
+import { useTranslations, useLocale } from "next-intl"
 import { useRouter } from "next/navigation"
 import { ProductionItem, ProductMaterial, ProductLaborCost, Status } from "@/types"
-import { updateProductionItem, updateProductMaterials, updateProductLaborCosts } from "@/lib/mockData"
+import { updateProductionItem, updateProductMaterials, updateProductLaborCosts, deleteProduct } from "@/lib/mockData"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { Calendar, Save, ArrowLeft, Package, UserSquare2, TrendingUp, Clock, Image as ImageIcon, Upload, X, Tag, Plus } from "lucide-react"
+import { Calendar, Save, ArrowLeft, Package, UserSquare2, TrendingUp, Clock, Image as ImageIcon, Upload, X, Tag, Plus, Trash2 } from "lucide-react"
 import { getDeadlineBadge } from "@/lib/dateUtils"
 import { Label } from "@/components/ui/label"
 
@@ -40,6 +40,7 @@ export default function CostingFormClient({
     const t = useTranslations("Costing")
     const tStatus = useTranslations("Status")
     const router = useRouter()
+    const locale = useLocale()
 
     const [product, setProduct] = useState<ProductionItem>(initialProduct)
     const [materials, setMaterials] = useState<ProductMaterial[]>(initialMaterials)
@@ -100,6 +101,18 @@ export default function CostingFormClient({
         } catch (error) {
             console.error("Failed to save", error);
             alert("Error saving data");
+        }
+    }
+
+    const handleDeleteProduct = async () => {
+        if (window.confirm("Are you sure you want to delete this product? This action cannot be undone.")) {
+            const success = await deleteProduct(product.id);
+            if (success) {
+                // Force a full redirect to clear any client-side cache and refetch the board
+                window.location.href = `/${locale}`;
+            } else {
+                alert("Failed to delete product");
+            }
         }
     }
 
@@ -800,6 +813,19 @@ export default function CostingFormClient({
                 </div >
 
             </div >
+
+            {/* Danger Zone */}
+            <div className="mt-8 pt-6 border-t border-destructive/20 flex flex-col items-center justify-center gap-2">
+                <Button 
+                    variant="outline" 
+                    className="border-destructive/50 text-destructive hover:bg-destructive hover:text-white"
+                    onClick={handleDeleteProduct}
+                >
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Delete Product
+                </Button>
+                <span className="text-xs text-muted-foreground">This action cannot be undone.</span>
+            </div>
 
         </div >
     )

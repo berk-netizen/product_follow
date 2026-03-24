@@ -19,7 +19,7 @@ import {
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { KanbanColumn } from "./KanbanColumn";
 import { ItemCard } from "./ItemCard";
-import { updateProductionItem } from "@/lib/mockData";
+import { updateProductionItem, deleteProduct } from "@/lib/mockData";
 
 const STATUS_COLUMNS: Status[] = [
     'SAMPLE SEWN',
@@ -112,6 +112,15 @@ export default function KanbanBoard({ initialItems }: KanbanBoardProps) {
         });
     };
 
+    const handleDelete = async (id: string) => {
+        const success = await deleteProduct(id);
+        if (success) {
+            setItems((prev) => prev.filter((item) => item.id !== id));
+        } else {
+            alert("Failed to delete product");
+        }
+    };
+
     const activeItem = activeId ? items.find((item) => item.id === activeId) : null;
 
     return (
@@ -139,6 +148,7 @@ export default function KanbanBoard({ initialItems }: KanbanBoardProps) {
                                     status={status}
                                     title={t(status.replace('/', '_').replace(' ', '_'))}
                                     items={items.filter((item) => item.status === status)}
+                                    onDelete={handleDelete}
                                 />
                             </div>
                         ))}
