@@ -23,7 +23,8 @@ export default function DashboardClient() {
             setLoading(true);
             try {
                 const data = await getProductionItems();
-                setItems(data);
+                // Main dashboard only shows production items (is_sample: false or null/undefined)
+                setItems(data.filter(item => item.is_sample !== true));
             } catch (error) {
                 console.error("Failed to fetch production items", error);
             } finally {

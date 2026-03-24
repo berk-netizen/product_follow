@@ -45,10 +45,10 @@ export const createProductionItem = async (item: Partial<ProductionItem>): Promi
 
     if (error) {
         console.error('Supabase error creating production item:', error);
-        // Show the exact error to help diagnose
-        alert(`Supabase Hatası:\nKod: ${error.code}\nMesaj: ${error.message}\nDetay: ${error.details}`);
+        alert(`Supabase Error:\nCode: ${error.code}\nMessage: ${error.message}\nDetail: ${error.details}`);
         return undefined;
     }
+    return data as ProductionItem;
 };
 
 export const deleteProduct = async (id: string): Promise<boolean> => {
