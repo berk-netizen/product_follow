@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState } from "react";
 import { ProductionItem, SampleStatus } from "@/types";
 import {
     DndContext,
@@ -14,12 +14,9 @@ import {
     DragEndEvent,
 } from "@dnd-kit/core";
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { SampleKanbanColumn } from "./SampleKanbanColumn";
 import { SampleItemCard } from "./SampleItemCard";
 import { updateProductionItem, deleteProduct } from "@/lib/mockData";
-
-const COLUMN_WIDTH = 300; // px
 
 const SAMPLE_COLUMNS: { status: SampleStatus; title: string; emoji: string; accentColor: string }[] = [
     { status: 'NUMUNE TALEP',              title: 'Requested',       emoji: '📋', accentColor: 'text-sky-400' },
@@ -36,18 +33,6 @@ interface SampleKanbanBoardProps {
 export default function SampleKanbanBoard({ initialItems }: SampleKanbanBoardProps) {
     const [items, setItems] = useState<ProductionItem[]>(initialItems);
     const [activeId, setActiveId] = useState<string | null>(null);
-    const scrollRef = useRef<HTMLDivElement>(null);
-
-    // ── Wheel → horizontal scroll (disabled during drag) ────────────────────
-    const handleWheel = useCallback((e: React.WheelEvent<HTMLDivElement>) => {
-        if (!scrollRef.current || activeId) return;
-        e.preventDefault();
-        scrollRef.current.scrollLeft += e.deltaY + e.deltaX;
-    }, [activeId]);
-
-    const scrollBy = (dir: 1 | -1) => {
-        scrollRef.current?.scrollBy({ left: dir * (COLUMN_WIDTH + 12), behavior: "smooth" });
-    };
 
     const sensors = useSensors(
         useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -121,26 +106,17 @@ export default function SampleKanbanBoard({ initialItems }: SampleKanbanBoardPro
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
         >
-            {/* Board shell */}
-            <div className="relative rounded-2xl bg-zinc-950/60 dark:bg-zinc-950/80 p-3 border border-border/20">
-
-                {/* ← Prev Arrow */}
-                <button
-                    onClick={() => scrollBy(-1)}
-                    className="absolute left-1 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-background/90 backdrop-blur-sm border border-border shadow-lg flex items-center justify-center text-muted-foreground hover:text-foreground transition-all"
-                >
-                    <ChevronLeft className="w-4 h-4" />
-                </button>
-
-                {/* Scroll container */}
+            {/* Board background: Zinc-950 */}
+            <div
+                className="w-full rounded-2xl"
+                style={{ background: '#09090b', padding: '12px 12px 32px 12px' }}
+            >
                 <div
-                    ref={scrollRef}
-                    onWheel={handleWheel}
-                    className="flex gap-3 overflow-x-auto scrollbar-hide px-8 pb-2 pt-1"
-                    style={{ cursor: activeId ? "grabbing" : "default" }}
+                    className="flex gap-6 overflow-x-auto scrollbar-hide"
+                    style={{ paddingBottom: '8px' }}
                 >
                     {SAMPLE_COLUMNS.map((col) => (
-                        <div key={col.status} style={{ minWidth: COLUMN_WIDTH, maxWidth: COLUMN_WIDTH }} className="flex-none">
+                        <div key={col.status} style={{ minWidth: 320, maxWidth: 350, flex: '0 0 320px' }}>
                             <SampleKanbanColumn
                                 status={col.status}
                                 title={col.title}
@@ -153,14 +129,6 @@ export default function SampleKanbanBoard({ initialItems }: SampleKanbanBoardPro
                         </div>
                     ))}
                 </div>
-
-                {/* → Next Arrow */}
-                <button
-                    onClick={() => scrollBy(1)}
-                    className="absolute right-1 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-background/90 backdrop-blur-sm border border-border shadow-lg flex items-center justify-center text-muted-foreground hover:text-foreground transition-all"
-                >
-                    <ChevronRight className="w-4 h-4" />
-                </button>
             </div>
 
             <DragOverlay>

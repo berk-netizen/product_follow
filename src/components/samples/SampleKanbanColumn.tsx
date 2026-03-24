@@ -24,18 +24,22 @@ export function SampleKanbanColumn({ status, title, emoji, accentColor, items, o
         <div
             ref={setNodeRef}
             className={cn(
-                "flex flex-col gap-3 min-w-[290px] max-w-[290px] w-full shrink-0 rounded-2xl p-4 pb-6 border transition-all duration-200",
-                isOver ? "border-emerald-500/60 bg-emerald-500/5 shadow-[0_0_20px_rgba(16,185,129,0.1)]" : "border-border/40"
+                "flex flex-col gap-3 min-w-[320px] max-w-[320px] w-full shrink-0 rounded-2xl p-4 pb-6 transition-all duration-200",
+                isOver ? "border-emerald-500/60 bg-emerald-500/10" : ""
             )}
+            style={{ 
+                background: '#18181b', 
+                border: isOver ? '1px solid rgb(16 185 129 / 0.6)' : '1px solid #27272a' 
+            }}
         >
-            <div className="flex items-center justify-between pb-3 border-b border-border mb-1">
+            <div className="flex items-center justify-between pb-3 mb-1 border-b border-[#27272a]">
                 <div className="flex items-center gap-2">
                     <span className="text-sm">{emoji}</span>
                     <h3 className={cn("font-semibold text-[11px] uppercase tracking-wider", accentColor)}>
                         {title}
                     </h3>
                 </div>
-                <Badge variant="secondary" className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-background border border-border text-foreground">
+                <Badge variant="secondary" className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#18181b] border border-[#27272a] text-foreground">
                     {items.length}
                 </Badge>
             </div>

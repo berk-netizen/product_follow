@@ -134,7 +134,7 @@ export function ItemCard({ item, isOverlay, onDelete }: ItemCardProps) {
                         <Trash2 className="w-4 h-4" />
                     </button>
                 )}
-                <div className="group/image relative w-full h-36 overflow-hidden border-b border-border/50 bg-muted/20 flex flex-col items-center justify-center">
+                <div className="group/image relative w-full h-36 overflow-hidden border-b border-border/50 bg-zinc-800/20 flex flex-col items-center justify-center">
                     {displayImage ? (
                         <Image
                             src={displayImage}
@@ -143,9 +143,9 @@ export function ItemCard({ item, isOverlay, onDelete }: ItemCardProps) {
                             className="object-cover transition-transform group-hover/image:scale-105 duration-500"
                         />
                     ) : (
-                        <div className="flex flex-col items-center justify-center text-muted-foreground/30">
-                            <ImageIcon className="w-8 h-8 mb-2 opacity-50" />
-                            <span className="text-[10px] font-bold uppercase tracking-wider">No Image</span>
+                        <div className="flex flex-col items-center justify-center text-zinc-700/50">
+                            <ImageIcon className="w-8 h-8 mb-2 opacity-30" />
+                            <span className="text-[10px] font-bold uppercase tracking-wider opacity-30">No Image</span>
                         </div>
                     )}
                     

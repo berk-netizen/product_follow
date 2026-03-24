@@ -13,10 +13,13 @@ interface KanbanColumnProps {
 
 export function KanbanColumn({ title, items, onDelete }: KanbanColumnProps) {
     return (
-        <div className="flex flex-col gap-3 min-w-[320px] max-w-[320px] w-full shrink-0 rounded-2xl p-4 h-full pb-6 border border-border/40 shadow-none">
-            <div className="flex items-center justify-between pb-3 border-b border-border mb-2">
+        <div 
+            className="flex flex-col gap-3 min-w-[320px] max-w-[320px] w-full shrink-0 rounded-2xl p-4 h-full pb-6 shadow-none"
+            style={{ background: '#18181b', border: '1px solid #27272a' }}
+        >
+            <div className="flex items-center justify-between pb-3 mb-2 border-b border-[#27272a]">
                 <h3 className="font-semibold text-xs text-muted-foreground uppercase tracking-wider">{title}</h3>
-                <Badge variant="secondary" className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-background border border-border text-foreground">
+                <Badge variant="secondary" className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#18181b] border border-[#27272a] text-foreground">
                     {items.length}
                 </Badge>
             </div>
