@@ -50,6 +50,7 @@ export default function DashboardClient() {
             cutting_date: null,
             actual_mfg_deadline: null,
             image_url: null,
+            main_image_url: newItemData.main_image_url || null,
             fabric_supplier: null,
             fabric_quality: null,
             fabric_composition: null,

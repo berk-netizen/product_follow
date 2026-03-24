@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
+import { uploadProductImage } from "@/lib/mockData"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -22,7 +23,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ProductionItem } from "@/types"
-import { Plus } from "lucide-react"
+import { Plus, Image as ImageIcon } from "lucide-react"
 
 interface CreateProductDialogProps {
     onAdd: (item: Partial<ProductionItem>) => void
@@ -37,13 +38,25 @@ export function CreateProductDialog({ onAdd }: CreateProductDialogProps) {
         manufacturer: "",
         target_loading_date: "",
         planned_qty: 0,
-        delivery_date: ""
+        delivery_date: "",
+        main_image_url: ""
     })
+    const [imageFile, setImageFile] = useState<File | null>(null)
+    const [isUploading, setIsUploading] = useState(false)
 
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        onAdd(formData)
+
+        let uploadedUrl = ""
+        if (imageFile) {
+            setIsUploading(true)
+            const url = await uploadProductImage(imageFile)
+            if (url) uploadedUrl = url
+            setIsUploading(false)
+        }
+
+        onAdd({ ...formData, main_image_url: uploadedUrl || null })
         setOpen(false)
         setFormData({
             season: "",
@@ -52,8 +65,10 @@ export function CreateProductDialog({ onAdd }: CreateProductDialogProps) {
             manufacturer: "",
             target_loading_date: "",
             planned_qty: 0,
-            delivery_date: ""
+            delivery_date: "",
+            main_image_url: ""
         })
+        setImageFile(null)
     }
 
     return (
@@ -163,9 +178,38 @@ export function CreateProductDialog({ onAdd }: CreateProductDialogProps) {
                                 className="col-span-3 font-mono h-10 bg-muted/30 border-border text-foreground"
                             />
                         </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label className="text-right text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70">
+                                Image
+                            </Label>
+                            <div className="col-span-3 flex items-center gap-3">
+                                <Button 
+                                    type="button" 
+                                    variant="outline" 
+                                    className="h-10 text-xs text-muted-foreground w-full flex gap-2 justify-start border-dashed border-2 bg-muted/10 hover:bg-muted/30"
+                                    onClick={() => document.getElementById('new-product-image')?.click()}
+                                >
+                                    <ImageIcon className="h-4 w-4" />
+                                    <span className="truncate max-w-[200px]">{imageFile ? imageFile.name : "Upload Product Image"}</span>
+                                </Button>
+                                <input 
+                                    id="new-product-image"
+                                    type="file" 
+                                    accept="image/*" 
+                                    className="hidden" 
+                                    onChange={(e) => {
+                                        if (e.target.files && e.target.files[0]) {
+                                            setImageFile(e.target.files[0]);
+                                        }
+                                    }} 
+                                />
+                            </div>
+                        </div>
                     </div>
                     <DialogFooter>
-                        <Button type="submit" className="w-full h-11 bg-primary text-primary-foreground font-semibold rounded-xl">Add to Board</Button>
+                        <Button disabled={isUploading} type="submit" className="w-full h-11 bg-primary text-primary-foreground font-semibold rounded-xl">
+                            {isUploading ? "Uploading..." : "Add to Board"}
+                        </Button>
                     </DialogFooter>
                 </form>
             </DialogContent>

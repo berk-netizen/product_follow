@@ -6,7 +6,7 @@ import { useState } from "react"
 import { useTranslations, useLocale } from "next-intl"
 import { useRouter } from "next/navigation"
 import { ProductionItem, ProductMaterial, ProductLaborCost, Status } from "@/types"
-import { updateProductionItem, updateProductMaterials, updateProductLaborCosts, deleteProduct } from "@/lib/mockData"
+import { updateProductionItem, updateProductMaterials, updateProductLaborCosts, deleteProduct, uploadProductImage } from "@/lib/mockData"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -55,7 +55,7 @@ export default function CostingFormClient({
     const [receivedQty, setReceivedQty] = useState(initialProduct.received_qty.toString())
 
     // Phase 3 States
-    const [imagePreview, setImagePreview] = useState<string | null>(initialProduct.image_url)
+    const [imagePreview, setImagePreview] = useState<string | null>(initialProduct.main_image_url || initialProduct.image_url)
     const [specs, setSpecs] = useState({
         fabric_supplier: initialProduct.fabric_supplier || "",
         fabric_quality: initialProduct.fabric_quality || "",
@@ -84,6 +84,7 @@ export default function CostingFormClient({
                 actual_mfg_deadline: mfgDeadline,
                 received_qty: parseInt(receivedQty) || 0,
                 image_url: imagePreview,
+                main_image_url: imagePreview,
                 fabric_supplier: specs.fabric_supplier,
                 fabric_quality: specs.fabric_quality,
                 fabric_composition: specs.fabric_composition,
@@ -132,11 +133,17 @@ export default function CostingFormClient({
         }));
     };
 
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const [isUploadingImage, setIsUploadingImage] = useState(false)
+
+    const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
         if (file) {
-            const url = URL.createObjectURL(file)
-            setImagePreview(url)
+            setIsUploadingImage(true)
+            const url = await uploadProductImage(file)
+            if (url) {
+                setImagePreview(url)
+            }
+            setIsUploadingImage(false)
         }
     }
 
@@ -146,6 +153,51 @@ export default function CostingFormClient({
 
     return (
         <div className="flex flex-col gap-6 pb-20">
+
+            {/* Premium Image Header */}
+            <div className="relative w-full h-80 md:h-[400px] lg:h-[500px] rounded-2xl overflow-hidden group bg-muted/20 border border-border shadow-sm flex items-center justify-center">
+                {imagePreview ? (
+                    <Image src={imagePreview} alt="Product Cover" fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
+                ) : (
+                    <div className="flex flex-col items-center justify-center text-muted-foreground/30">
+                        <ImageIcon className="w-16 h-16 mb-4 opacity-50" />
+                        <span className="text-sm font-bold uppercase tracking-wider">No Cover Image</span>
+                    </div>
+                )}
+                
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4 z-10">
+                    <Button 
+                        variant="secondary" 
+                        size="lg" 
+                        className="font-semibold shadow-lg backdrop-blur-md bg-white/90 hover:bg-white text-black"
+                        onClick={() => document.getElementById('premium-image-upload')?.click()}
+                        disabled={isUploadingImage}
+                    >
+                        {isUploadingImage ? (
+                            <span className="flex items-center"><Upload className="w-4 h-4 mr-2 animate-bounce" /> Uploading...</span>
+                        ) : (
+                            <span className="flex items-center"><Upload className="w-4 h-4 mr-2" /> {imagePreview ? "Change Cover" : "Upload Cover"}</span>
+                        )}
+                    </Button>
+                    {imagePreview && !isUploadingImage && (
+                        <Button 
+                            variant="destructive" 
+                            size="icon" 
+                            className="h-11 w-11 rounded-full shadow-lg"
+                            onClick={removeImage}
+                        >
+                            <X className="w-5 h-5" />
+                        </Button>
+                    )}
+                </div>
+                <input 
+                    id="premium-image-upload" 
+                    type="file" 
+                    accept="image/*" 
+                    className="hidden" 
+                    onChange={handleImageChange} 
+                />
+            </div>
 
             {/* Header Actions */}
             <div className="flex items-center justify-between bg-card p-4 rounded-xl border border-border shadow-sm sticky top-20 z-10 w-full mb-2">
@@ -218,41 +270,7 @@ export default function CostingFormClient({
 
                 {/* Left Column: Image & Dates */}
                 <div className="lg:col-span-1 flex flex-col gap-6">
-                    {/* Image Upload Box */}
-                    <Card className="border-border shadow-sm overflow-hidden bg-card">
-                        <CardHeader className="bg-muted/30 border-b border-border py-3">
-                            <CardTitle className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-                                <ImageIcon className="h-3.5 w-3.5" />
-                                Product Visual
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="p-4">
-                            <div className="relative aspect-square rounded-xl border-2 border-dashed border-border bg-muted/20 flex flex-col items-center justify-center overflow-hidden group">
-                                {imagePreview ? (
-                                    <>
-                                        <Image src={imagePreview} alt="Preview" fill className="object-cover" />
-                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                                            <Button size="sm" variant="secondary" onClick={() => document.getElementById('image-upload')?.click()}>
-                                                <Upload className="h-4 w-4 mr-2" />
-                                                {t("change_image")}
-                                            </Button>
-                                            <Button size="sm" variant="destructive" onClick={removeImage}>
-                                                <X className="h-4 w-4" />
-                                            </Button>
-                                        </div>
-                                    </>
-                                ) : (
-                                    <div className="flex flex-col items-center gap-2 cursor-pointer" onClick={() => document.getElementById('image-upload')?.click()}>
-                                        <div className="p-3 rounded-full bg-slate-100 text-slate-400">
-                                            <Upload className="h-6 w-6" />
-                                        </div>
-                                        <span className="text-xs font-medium text-slate-500">{t("upload_image")}</span>
-                                    </div>
-                                )}
-                                <input id="image-upload" type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
-                            </div>
-                        </CardContent>
-                    </Card>
+
 
                     <Card className="border-border shadow-sm bg-card">
                         <CardHeader className="bg-muted/30 border-b border-border py-4">

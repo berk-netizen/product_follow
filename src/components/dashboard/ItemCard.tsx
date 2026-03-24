@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import Image from "next/image";
 
 import { useSortable } from "@dnd-kit/sortable"
@@ -13,7 +15,8 @@ import { format, differenceInDays } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useLocale } from "next-intl";
 import { getDeadlineBadge, getMaterialAlertBadge } from "@/lib/dateUtils";
-import { Mail, Trash2 } from "lucide-react";
+import { Mail, Trash2, Plus, Loader2, Image as ImageIcon } from "lucide-react";
+import { uploadProductImage, updateProductionItem } from "@/lib/mockData";
 
 interface ItemCardProps {
     item: ProductionItem;
@@ -24,6 +27,7 @@ interface ItemCardProps {
 export function ItemCard({ item, isOverlay, onDelete }: ItemCardProps) {
     const router = useRouter();
     const locale = useLocale();
+    const [isUploadingImage, setIsUploadingImage] = useState(false);
 
     const {
         attributes,
@@ -84,6 +88,22 @@ export function ItemCard({ item, isOverlay, onDelete }: ItemCardProps) {
         }
     };
 
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setIsUploadingImage(true);
+        const url = await uploadProductImage(file);
+        
+        if (url) {
+            await updateProductionItem(item.id, { main_image_url: url });
+            router.refresh();
+        }
+        setIsUploadingImage(false);
+    };
+
+    const displayImage = item.main_image_url || item.image_url;
+
     return (
         <div
             ref={setNodeRef}
@@ -114,16 +134,44 @@ export function ItemCard({ item, isOverlay, onDelete }: ItemCardProps) {
                         <Trash2 className="w-4 h-4" />
                     </button>
                 )}
-                {item.image_url && (
-                    <div className="relative w-full h-36 overflow-hidden border-b border-border/50">
+                <div className="group/image relative w-full h-36 overflow-hidden border-b border-border/50 bg-muted/20 flex flex-col items-center justify-center">
+                    {displayImage ? (
                         <Image
-                            src={item.image_url}
+                            src={displayImage}
                             alt={item.model_name}
                             fill
-                            className="object-cover transition-transform hover:scale-105 duration-500"
+                            className="object-cover transition-transform group-hover/image:scale-105 duration-500"
                         />
-                    </div>
-                )}
+                    ) : (
+                        <div className="flex flex-col items-center justify-center text-muted-foreground/30">
+                            <ImageIcon className="w-8 h-8 mb-2 opacity-50" />
+                            <span className="text-[10px] font-bold uppercase tracking-wider">No Image</span>
+                        </div>
+                    )}
+                    
+                    {/* Hover Upload Button */}
+                    {!isOverlay && (
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/image:opacity-100 transition-opacity flex items-center justify-center z-10" onClick={(e) => e.stopPropagation()}>
+                            <label className="cursor-pointer bg-background/90 hover:bg-background text-foreground shadow-sm rounded-full p-2 transition-transform transform active:scale-95 flex items-center gap-2 px-3 text-xs font-semibold">
+                                {isUploadingImage ? (
+                                    <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                                ) : (
+                                    <>
+                                        <Plus className="w-4 h-4 text-primary" />
+                                        <span>Upload</span>
+                                    </>
+                                )}
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    disabled={isUploadingImage}
+                                    onChange={handleImageUpload}
+                                />
+                            </label>
+                        </div>
+                    )}
+                </div>
                 <CardHeader className="p-4 pb-2 space-y-2">
                     <div className="flex justify-between items-start gap-2">
                         <Badge variant="outline" className="font-mono text-[10px] tracking-tight bg-muted/50 text-muted-foreground border-border">

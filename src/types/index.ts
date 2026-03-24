@@ -15,6 +15,7 @@ export interface ProductionItem {
     cutting_date: string | null;
     actual_mfg_deadline: string | null;
     image_url: string | null;
+    main_image_url: string | null;
     fabric_supplier: string | null;
     fabric_quality: string | null;
     fabric_composition: string | null;
