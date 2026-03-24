@@ -53,7 +53,7 @@ export function SampleKanbanColumn({ status, title, emoji, accentColor, items, o
                     ))}
                     {items.length === 0 && (
                         <div className="flex items-center justify-center h-20 rounded-xl border border-dashed border-border/50 text-muted-foreground/30 text-xs">
-                            Boş
+                            Empty — drop a card here
                         </div>
                     )}
                 </div>

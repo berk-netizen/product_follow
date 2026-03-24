@@ -40,7 +40,7 @@ export function SampleItemCard({ item, isOverlay, onDelete, onSendToProduction, 
 
     const handleSendToProduction = async (e: React.MouseEvent) => {
         e.stopPropagation();
-        if (!window.confirm(`"${item.model_name}" ürününü üretime aktarmak istediğinizden emin misiniz? Numune listesinden kaldırılacak.`)) return;
+        if (!window.confirm(`Are you sure you want to send "${item.model_name}" to production? It will be removed from the samples list.`)) return;
         setIsSending(true);
         await updateProductionItem(item.id, { is_sample: false, status: 'IN CUTTING' });
         setIsSending(false);
@@ -49,7 +49,7 @@ export function SampleItemCard({ item, isOverlay, onDelete, onSendToProduction, 
 
     const handleDelete = (e: React.MouseEvent) => {
         e.stopPropagation();
-        if (window.confirm("Bu numuneyi silmek istediğinizden emin misiniz?")) {
+        if (window.confirm("Are you sure you want to delete this sample?")) {
             if (onDelete) onDelete(item.id);
         }
     };
@@ -130,7 +130,7 @@ export function SampleItemCard({ item, isOverlay, onDelete, onSendToProduction, 
                             ) : (
                                 <>
                                     <ArrowRight className="w-3.5 h-3.5" />
-                                    Üretime Aktar
+                                    Send to Production
                                 </>
                             )}
                         </Button>

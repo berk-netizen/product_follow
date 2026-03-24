@@ -21,11 +21,11 @@ import { SampleItemCard } from "./SampleItemCard";
 import { updateProductionItem, deleteProduct } from "@/lib/mockData";
 
 const SAMPLE_COLUMNS: { status: SampleStatus; title: string; emoji: string; accentColor: string }[] = [
-    { status: 'NUMUNE TALEP',             title: 'Numune Talep',              emoji: '📋', accentColor: 'text-sky-400' },
-    { status: 'DİKİM AŞAMASINDA',         title: 'Dikim Aşamasında',          emoji: '🧵', accentColor: 'text-amber-400' },
-    { status: 'MÜŞTERİYE GÖNDERİLDİ',    title: 'Müşteriye Gönderildi',      emoji: '📦', accentColor: 'text-blue-400' },
-    { status: 'REVİZE İSTENDİ',           title: 'Revize İstendi',            emoji: '✏️', accentColor: 'text-rose-400' },
-    { status: 'ONAYLANDI / ÜRETİME HAZIR', title: 'Onaylandi – Üretime Hazır', emoji: '✅', accentColor: 'text-emerald-400' },
+    { status: 'NUMUNE TALEP',              title: 'Requested',           emoji: '📋', accentColor: 'text-sky-400' },
+    { status: 'DİKİM AŞAMASINDA',          title: 'In Sewing',           emoji: '🧵', accentColor: 'text-amber-400' },
+    { status: 'MÜŞTERİYE GÖNDERİLDİ',     title: 'Sent to Client',      emoji: '📦', accentColor: 'text-blue-400' },
+    { status: 'REVİZE İSTENDİ',            title: 'Revision Needed',     emoji: '✏️', accentColor: 'text-rose-400' },
+    { status: 'ONAYLANDI / ÜRETİME HAZIR', title: 'Approved',            emoji: '✅', accentColor: 'text-emerald-400' },
 ];
 
 interface SampleKanbanBoardProps {
