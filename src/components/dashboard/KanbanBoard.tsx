@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useRef, useCallback } from "react";
 import { ProductionItem, Status } from "@/types";
 import { useTranslations } from "next-intl";
-import useEmblaCarousel from "embla-carousel-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import {
     DndContext,
@@ -31,6 +30,8 @@ const STATUS_COLUMNS: Status[] = [
     'SHIPPED'
 ];
 
+const COLUMN_WIDTH = 320; // px
+
 interface KanbanBoardProps {
     initialItems: ProductionItem[];
 }
@@ -39,26 +40,25 @@ export default function KanbanBoard({ initialItems }: KanbanBoardProps) {
     const t = useTranslations("Status");
     const [items, setItems] = useState<ProductionItem[]>(initialItems);
     const [activeId, setActiveId] = useState<string | null>(null);
-    const [selectedIndex, setSelectedIndex] = useState(0);
+    const scrollRef = useRef<HTMLDivElement>(null);
 
-    // Embla Carousel - dragFree for smooth momentum, contained scroll
-    const [emblaRef, emblaApi] = useEmblaCarousel({
-        dragFree: true,
-        containScroll: "trimSnaps",
-        align: "start",
-    });
+    // ── Wheel → horizontal scroll ────────────────────────────────────────────
+    const handleWheel = useCallback((e: React.WheelEvent<HTMLDivElement>) => {
+        if (!scrollRef.current) return;
+        // Only intercept if not dragging
+        if (activeId) return;
+        e.preventDefault();
+        scrollRef.current.scrollLeft += e.deltaY + e.deltaX;
+    }, [activeId]);
 
-    const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
-    const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
+    const scrollBy = (dir: 1 | -1) => {
+        scrollRef.current?.scrollBy({ left: dir * (COLUMN_WIDTH + 16), behavior: "smooth" });
+    };
 
-    // DnD sensors - distance:8 prevents carousel drag conflicts
+    // ── DnD sensors – distance:8 avoids premature drag on scroll ────────────
     const sensors = useSensors(
-        useSensor(PointerSensor, {
-            activationConstraint: { distance: 8 },
-        }),
-        useSensor(KeyboardSensor, {
-            coordinateGetter: sortableKeyboardCoordinates,
-        })
+        useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+        useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
     );
 
     const handleDragStart = (event: DragStartEvent) => {
@@ -68,12 +68,10 @@ export default function KanbanBoard({ initialItems }: KanbanBoardProps) {
     const handleDragEnd = (event: DragEndEvent) => {
         const { active, over } = event;
         setActiveId(null);
-
         if (!over) return;
 
-        const activeIdStr = active.id;
-        const overIdStr = over.id;
-
+        const activeIdStr = active.id as string;
+        const overIdStr = over.id as string;
         if (activeIdStr === overIdStr) return;
 
         setItems((prev) => {
@@ -84,7 +82,6 @@ export default function KanbanBoard({ initialItems }: KanbanBoardProps) {
             if (!isOverColumn && activeIndex !== -1 && overIndex !== -1) {
                 const activeItem = prev[activeIndex];
                 const overItem = prev[overIndex];
-
                 if (activeItem.status !== overItem.status) {
                     const newStatus = overItem.status;
                     updateProductionItem(activeItem.id, { status: newStatus });
@@ -92,14 +89,12 @@ export default function KanbanBoard({ initialItems }: KanbanBoardProps) {
                     newItems[activeIndex] = { ...activeItem, status: newStatus };
                     return arrayMove(newItems, activeIndex, overIndex);
                 }
-
                 return arrayMove(prev, activeIndex, overIndex);
             }
 
             if (isOverColumn && activeIndex !== -1) {
                 const activeItem = prev[activeIndex];
                 const overStatus = overIdStr as Status;
-
                 if (activeItem.status !== overStatus) {
                     updateProductionItem(activeItem.id, { status: overStatus });
                     const newItems = [...prev];
@@ -114,11 +109,8 @@ export default function KanbanBoard({ initialItems }: KanbanBoardProps) {
 
     const handleDelete = async (id: string) => {
         const success = await deleteProduct(id);
-        if (success) {
-            setItems((prev) => prev.filter((item) => item.id !== id));
-        } else {
-            alert("Failed to delete product");
-        }
+        if (success) setItems((prev) => prev.filter((item) => item.id !== id));
+        else alert("Failed to delete product");
     };
 
     const activeItem = activeId ? items.find((item) => item.id === activeId) : null;
@@ -130,53 +122,43 @@ export default function KanbanBoard({ initialItems }: KanbanBoardProps) {
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
         >
-            <div className="relative w-full">
-                {/* Prev Button */}
+            {/* Board shell – slightly darker bg for depth */}
+            <div className="relative rounded-2xl bg-zinc-950/60 dark:bg-zinc-950/80 p-3 border border-border/20">
+
+                {/* ← Prev arrow */}
                 <button
-                    onClick={scrollPrev}
-                    className="absolute -left-4 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-background/80 backdrop-blur-sm border border-border shadow-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-muted transition-all"
+                    onClick={() => scrollBy(-1)}
+                    className="absolute left-1 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-background/90 backdrop-blur-sm border border-border shadow-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-muted transition-all"
                 >
                     <ChevronLeft className="w-4 h-4" />
                 </button>
 
-                {/* Embla Viewport */}
-                <div className="overflow-hidden mx-6" ref={emblaRef}>
-                    <div className="flex gap-4 pb-4">
-                        {STATUS_COLUMNS.map((status) => (
-                            <div key={status} className="flex-none w-[300px]">
-                                <KanbanColumn
-                                    status={status}
-                                    title={t(status.replace('/', '_').replace(' ', '_'))}
-                                    items={items.filter((item) => item.status === status)}
-                                    onDelete={handleDelete}
-                                />
-                            </div>
-                        ))}
-                    </div>
+                {/* Scroll container */}
+                <div
+                    ref={scrollRef}
+                    onWheel={handleWheel}
+                    className="flex gap-3 overflow-x-auto scrollbar-hide px-8 pb-2 pt-1"
+                    style={{ cursor: activeId ? "grabbing" : "default" }}
+                >
+                    {STATUS_COLUMNS.map((status) => (
+                        <div key={status} style={{ minWidth: COLUMN_WIDTH, maxWidth: COLUMN_WIDTH }} className="flex-none">
+                            <KanbanColumn
+                                status={status}
+                                title={t(status.replace('/', '_').replace(' ', '_'))}
+                                items={items.filter((item) => item.status === status)}
+                                onDelete={handleDelete}
+                            />
+                        </div>
+                    ))}
                 </div>
 
-                {/* Next Button */}
+                {/* → Next arrow */}
                 <button
-                    onClick={scrollNext}
-                    className="absolute -right-4 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-background/80 backdrop-blur-sm border border-border shadow-md flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-muted transition-all"
+                    onClick={() => scrollBy(1)}
+                    className="absolute right-1 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-background/90 backdrop-blur-sm border border-border shadow-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-muted transition-all"
                 >
                     <ChevronRight className="w-4 h-4" />
                 </button>
-            </div>
-
-            {/* Pagination Dots */}
-            <div className="flex justify-center gap-1.5 mt-3">
-                {STATUS_COLUMNS.map((status, i) => (
-                    <button
-                        key={status}
-                        onClick={() => emblaApi?.scrollTo(i)}
-                        className={`h-1.5 rounded-full transition-all ${
-                            i === selectedIndex
-                                ? "w-4 bg-emerald-500"
-                                : "w-1.5 bg-zinc-600 hover:bg-zinc-400"
-                        }`}
-                    />
-                ))}
             </div>
 
             <DragOverlay>

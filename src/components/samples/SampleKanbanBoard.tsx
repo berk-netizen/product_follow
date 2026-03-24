@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useRef, useCallback } from "react";
 import { ProductionItem, SampleStatus } from "@/types";
 import {
     DndContext,
@@ -14,18 +14,19 @@ import {
     DragEndEvent,
 } from "@dnd-kit/core";
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
-import useEmblaCarousel from "embla-carousel-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { SampleKanbanColumn } from "./SampleKanbanColumn";
 import { SampleItemCard } from "./SampleItemCard";
 import { updateProductionItem, deleteProduct } from "@/lib/mockData";
 
+const COLUMN_WIDTH = 300; // px
+
 const SAMPLE_COLUMNS: { status: SampleStatus; title: string; emoji: string; accentColor: string }[] = [
-    { status: 'NUMUNE TALEP',              title: 'Requested',           emoji: '📋', accentColor: 'text-sky-400' },
-    { status: 'DİKİM AŞAMASINDA',          title: 'In Sewing',           emoji: '🧵', accentColor: 'text-amber-400' },
-    { status: 'MÜŞTERİYE GÖNDERİLDİ',     title: 'Sent to Client',      emoji: '📦', accentColor: 'text-blue-400' },
-    { status: 'REVİZE İSTENDİ',            title: 'Revision Needed',     emoji: '✏️', accentColor: 'text-rose-400' },
-    { status: 'ONAYLANDI / ÜRETİME HAZIR', title: 'Approved',            emoji: '✅', accentColor: 'text-emerald-400' },
+    { status: 'NUMUNE TALEP',              title: 'Requested',       emoji: '📋', accentColor: 'text-sky-400' },
+    { status: 'DİKİM AŞAMASINDA',          title: 'In Sewing',       emoji: '🧵', accentColor: 'text-amber-400' },
+    { status: 'MÜŞTERİYE GÖNDERİLDİ',     title: 'Sent to Client',  emoji: '📦', accentColor: 'text-blue-400' },
+    { status: 'REVİZE İSTENDİ',            title: 'Revision Needed', emoji: '✏️', accentColor: 'text-rose-400' },
+    { status: 'ONAYLANDI / ÜRETİME HAZIR', title: 'Approved',        emoji: '✅', accentColor: 'text-emerald-400' },
 ];
 
 interface SampleKanbanBoardProps {
@@ -35,15 +36,18 @@ interface SampleKanbanBoardProps {
 export default function SampleKanbanBoard({ initialItems }: SampleKanbanBoardProps) {
     const [items, setItems] = useState<ProductionItem[]>(initialItems);
     const [activeId, setActiveId] = useState<string | null>(null);
+    const scrollRef = useRef<HTMLDivElement>(null);
 
-    const [emblaRef, emblaApi] = useEmblaCarousel({
-        dragFree: true,
-        containScroll: "trimSnaps",
-        align: "start",
-    });
+    // ── Wheel → horizontal scroll (disabled during drag) ────────────────────
+    const handleWheel = useCallback((e: React.WheelEvent<HTMLDivElement>) => {
+        if (!scrollRef.current || activeId) return;
+        e.preventDefault();
+        scrollRef.current.scrollLeft += e.deltaY + e.deltaX;
+    }, [activeId]);
 
-    const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
-    const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
+    const scrollBy = (dir: 1 | -1) => {
+        scrollRef.current?.scrollBy({ left: dir * (COLUMN_WIDTH + 12), behavior: "smooth" });
+    };
 
     const sensors = useSensors(
         useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -73,7 +77,6 @@ export default function SampleKanbanBoard({ initialItems }: SampleKanbanBoardPro
             if (!isOverColumn && activeIndex !== -1 && overIndex !== -1) {
                 const activeItem = prev[activeIndex];
                 const overItem = prev[overIndex];
-
                 if (activeItem.sample_status !== overItem.sample_status) {
                     const newStatus = overItem.sample_status!;
                     updateProductionItem(activeItem.id, { sample_status: newStatus });
@@ -102,7 +105,7 @@ export default function SampleKanbanBoard({ initialItems }: SampleKanbanBoardPro
     const handleDelete = async (id: string) => {
         const success = await deleteProduct(id);
         if (success) setItems((prev) => prev.filter((item) => item.id !== id));
-        else alert("Silme işlemi başarısız oldu.");
+        else alert("Failed to delete sample.");
     };
 
     const handleSendToProduction = (id: string) => {
@@ -118,48 +121,46 @@ export default function SampleKanbanBoard({ initialItems }: SampleKanbanBoardPro
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
         >
-            <div className="relative w-full">
+            {/* Board shell */}
+            <div className="relative rounded-2xl bg-zinc-950/60 dark:bg-zinc-950/80 p-3 border border-border/20">
+
+                {/* ← Prev Arrow */}
                 <button
-                    onClick={scrollPrev}
-                    className="absolute -left-4 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-background/80 backdrop-blur-sm border border-border shadow-md flex items-center justify-center text-muted-foreground hover:text-foreground transition-all"
+                    onClick={() => scrollBy(-1)}
+                    className="absolute left-1 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-background/90 backdrop-blur-sm border border-border shadow-lg flex items-center justify-center text-muted-foreground hover:text-foreground transition-all"
                 >
                     <ChevronLeft className="w-4 h-4" />
                 </button>
 
-                <div className="overflow-hidden mx-6" ref={emblaRef}>
-                    <div className="flex gap-4 pb-4">
-                        {SAMPLE_COLUMNS.map((col) => (
-                            <div key={col.status} className="flex-none w-[290px]">
-                                <SampleKanbanColumn
-                                    status={col.status}
-                                    title={col.title}
-                                    emoji={col.emoji}
-                                    accentColor={col.accentColor}
-                                    items={items.filter((item) => item.sample_status === col.status)}
-                                    onDelete={handleDelete}
-                                    onSendToProduction={handleSendToProduction}
-                                />
-                            </div>
-                        ))}
-                    </div>
+                {/* Scroll container */}
+                <div
+                    ref={scrollRef}
+                    onWheel={handleWheel}
+                    className="flex gap-3 overflow-x-auto scrollbar-hide px-8 pb-2 pt-1"
+                    style={{ cursor: activeId ? "grabbing" : "default" }}
+                >
+                    {SAMPLE_COLUMNS.map((col) => (
+                        <div key={col.status} style={{ minWidth: COLUMN_WIDTH, maxWidth: COLUMN_WIDTH }} className="flex-none">
+                            <SampleKanbanColumn
+                                status={col.status}
+                                title={col.title}
+                                emoji={col.emoji}
+                                accentColor={col.accentColor}
+                                items={items.filter((item) => item.sample_status === col.status)}
+                                onDelete={handleDelete}
+                                onSendToProduction={handleSendToProduction}
+                            />
+                        </div>
+                    ))}
                 </div>
 
+                {/* → Next Arrow */}
                 <button
-                    onClick={scrollNext}
-                    className="absolute -right-4 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-background/80 backdrop-blur-sm border border-border shadow-md flex items-center justify-center text-muted-foreground hover:text-foreground transition-all"
+                    onClick={() => scrollBy(1)}
+                    className="absolute right-1 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-background/90 backdrop-blur-sm border border-border shadow-lg flex items-center justify-center text-muted-foreground hover:text-foreground transition-all"
                 >
                     <ChevronRight className="w-4 h-4" />
                 </button>
-            </div>
-
-            <div className="flex justify-center gap-1.5 mt-3">
-                {SAMPLE_COLUMNS.map((col, i) => (
-                    <button
-                        key={col.status}
-                        onClick={() => emblaApi?.scrollTo(i)}
-                        className="h-1.5 w-1.5 rounded-full bg-zinc-600 hover:bg-zinc-400 transition-all"
-                    />
-                ))}
             </div>
 
             <DragOverlay>
