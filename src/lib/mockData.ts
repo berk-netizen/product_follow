@@ -5,7 +5,7 @@ import { ProductionItem, ProductMaterial, ProductLaborCost } from '../types';
 
 export const getProductionItems = async (): Promise<ProductionItem[]> => {
     const { data, error } = await supabase
-        .from('public.production_items')
+        .from('production_items')
         .select('*')
         .order('created_at', { ascending: false });
 
@@ -18,7 +18,7 @@ export const getProductionItems = async (): Promise<ProductionItem[]> => {
 
 export const getProductionItemById = async (id: string): Promise<ProductionItem | undefined> => {
     const { data, error } = await supabase
-        .from('public.production_items')
+        .from('production_items')
         .select('*')
         .eq('id', id)
         .single();
@@ -37,7 +37,7 @@ export const createProductionItem = async (item: Partial<ProductionItem>): Promi
     };
 
     const { data, error } = await supabase
-        .from('public.production_items')
+        .from('production_items')
         .insert([itemToInsert])
         .select()
         .single();
@@ -52,7 +52,7 @@ export const createProductionItem = async (item: Partial<ProductionItem>): Promi
 
 export const deleteProduct = async (id: string): Promise<boolean> => {
     const { error } = await supabase
-        .from('public.production_items')
+        .from('production_items')
         .delete()
         .eq('id', id);
 
@@ -87,7 +87,7 @@ export const uploadProductImage = async (file: File): Promise<string | null> => 
 
 export const getProductMaterials = async (productId: string): Promise<ProductMaterial[]> => {
     const { data, error } = await supabase
-        .from('public.product_materials')
+        .from('product_materials')
         .select('*')
         .eq('product_id', productId)
         .order('created_at', { ascending: true });
@@ -101,7 +101,7 @@ export const getProductMaterials = async (productId: string): Promise<ProductMat
 
 export const getProductLaborCosts = async (productId: string): Promise<ProductLaborCost[]> => {
     const { data, error } = await supabase
-        .from('public.product_labor_costs')
+        .from('product_labor_costs')
         .select('*')
         .eq('product_id', productId)
         .order('created_at', { ascending: true });
@@ -115,7 +115,7 @@ export const getProductLaborCosts = async (productId: string): Promise<ProductLa
 
 export const updateProductionItem = async (id: string, updates: Partial<ProductionItem>): Promise<ProductionItem | undefined> => {
     const { data, error } = await supabase
-        .from('public.production_items')
+        .from('production_items')
         .update(updates)
         .eq('id', id)
         .select()
@@ -137,7 +137,7 @@ export const updateProductionItem = async (id: string, updates: Partial<Producti
 export const updateProductMaterials = async (productId: string, newMaterials: ProductMaterial[]): Promise<ProductMaterial[]> => {
     // 1. Delete all existing materials for this product
     const { error: deleteError } = await supabase
-        .from('public.product_materials')
+        .from('product_materials')
         .delete()
         .eq('product_id', productId);
 
@@ -157,7 +157,7 @@ export const updateProductMaterials = async (productId: string, newMaterials: Pr
 
     // 3. Insert new materials
     const { data, error: insertError } = await supabase
-        .from('public.product_materials')
+        .from('product_materials')
         .insert(materialsToInsert)
         .select();
 
@@ -172,7 +172,7 @@ export const updateProductMaterials = async (productId: string, newMaterials: Pr
 export const updateProductLaborCosts = async (productId: string, newLaborCosts: ProductLaborCost[]): Promise<ProductLaborCost[]> => {
     // 1. Delete all existing labor costs for this product
     const { error: deleteError } = await supabase
-        .from('public.product_labor_costs')
+        .from('product_labor_costs')
         .delete()
         .eq('product_id', productId);
 
@@ -191,7 +191,7 @@ export const updateProductLaborCosts = async (productId: string, newLaborCosts: 
 
     // 3. Insert new labor costs
     const { data, error: insertError } = await supabase
-        .from('public.product_labor_costs')
+        .from('product_labor_costs')
         .insert(laborToInsert)
         .select();
 
