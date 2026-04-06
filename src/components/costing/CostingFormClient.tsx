@@ -594,7 +594,7 @@ export default function CostingFormClient({
                             <div className="flex items-center gap-2">
                                 <Package className="h-4 w-4 text-slate-500" />
                                 <CardTitle className="text-sm font-semibold text-slate-700">
-                                    Accessories & Trims (Aksesuarlar)
+                                    Accessories & Trims
                                 </CardTitle>
                             </div>
                             <Button

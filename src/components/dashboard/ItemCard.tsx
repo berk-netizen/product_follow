@@ -59,21 +59,16 @@ export function ItemCard({ item, isOverlay, onDelete }: ItemCardProps) {
     const deadlineBadge = getDeadlineBadge(item.target_loading_date, item.status);
     const materialBadge = getMaterialAlertBadge(item.fabric_order_status, item.cutting_date);
 
-    // Delay Tracking Logic
-    const isDelayed = item.delivery_date 
-        ? new Date() > new Date(item.delivery_date) && !['SHIPPED', 'IN WAREHOUSE'].includes(item.status)
-        : false;
-        
-    const delayDays = isDelayed && item.delivery_date 
-        ? differenceInDays(new Date(), new Date(item.delivery_date))
-        : 0;
+    // Delay Tracking Logic (Simplified)
+    const isDelayed = false;
+    const delayDays = 0;
 
     const handleDraftEmail = (e: React.MouseEvent) => {
         e.stopPropagation();
         
-        // Default to Üretici template since supplier_type is removed from DB
-        let subject = `Sipariş Gecikmesi: ${item.model_name} / ${item.model_code}`;
-        let body = `Sayın ${item.manufacturer || 'İlgili'},\n\n${item.model_name} (${item.model_code}) referanslı siparişimizin üretim aşamasında geciktiğini tespit ettik. \n\nHedef Tarih: ${targetDateFormatted}\nGecikme: ${delayDays} gün.\n\nGüncel üretim durumu ve kesin sevkiyat tarihi hakkında acil bilgi rica ederiz.\n\nİyi çalışmalar.`;
+        // Default to Manufacturer template
+        let subject = `Order Delay: ${item.model_name} / ${item.model_code}`;
+        let body = `Dear ${item.manufacturer || 'Relevant Person'},\n\nWe have noticed a delay in the production phase of our order with reference ${item.model_name} (${item.model_code}). \n\nTarget Date: ${targetDateFormatted}\nDelay: ${delayDays} days.\n\nPlease provide urgent information about the current production status and exact shipment date.\n\nBest regards.`;
 
         const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
         window.location.href = mailtoLink;
@@ -205,7 +200,7 @@ export function ItemCard({ item, isOverlay, onDelete }: ItemCardProps) {
                         {isDelayed && (
                             <div className="absolute -top-3 -right-2 bg-destructive text-white text-[9px] font-bold px-2 py-0.5 rounded-full flex items-center shadow-sm animate-pulse">
                                 <AlertOctagon className="w-2.5 h-2.5 mr-1" />
-                                {delayDays} GÜN GECİKTİ
+                                {delayDays} DAYS DELAYED
                             </div>
                         )}
                         <div className="flex items-center gap-2 text-muted-foreground">
@@ -219,7 +214,7 @@ export function ItemCard({ item, isOverlay, onDelete }: ItemCardProps) {
                                 <button 
                                     onClick={handleDraftEmail}
                                     className="bg-primary hover:bg-primary/90 text-white p-1.5 rounded-lg transition-all shadow-sm flex items-center justify-center group"
-                                    title="E-posta Taslağı Oluştur"
+                                    title="Draft Email for Delay"
                                 >
                                     <Mail className="w-3.5 h-3.5" />
                                 </button>

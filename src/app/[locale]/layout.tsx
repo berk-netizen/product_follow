@@ -55,7 +55,7 @@ export default async function RootLayout({
                     Dashboard
                   </Link>
                   <Link href={`/${locale}/samples`} className="text-sm font-medium text-slate-300 hover:text-white transition-colors">
-                    Numune Takip
+                    Sample Tracking
                   </Link>
                   <Link href={`/${locale}/analytics`} className="text-sm font-medium text-slate-300 hover:text-white transition-colors">
                     Analytics

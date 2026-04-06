@@ -38,7 +38,6 @@ export function CreateProductDialog({ onAdd }: CreateProductDialogProps) {
         manufacturer: "",
         target_loading_date: "",
         planned_qty: 0,
-        delivery_date: "",
         main_image_url: ""
     })
     const [imageFile, setImageFile] = useState<File | null>(null)
@@ -65,7 +64,6 @@ export function CreateProductDialog({ onAdd }: CreateProductDialogProps) {
             manufacturer: "",
             target_loading_date: "",
             planned_qty: 0,
-            delivery_date: "",
             main_image_url: ""
         })
         setImageFile(null)
@@ -164,18 +162,6 @@ export function CreateProductDialog({ onAdd }: CreateProductDialogProps) {
                                 onChange={(e) => setFormData({ ...formData, planned_qty: parseInt(e.target.value) || 0 })}
                                 className="col-span-3 font-mono font-bold h-10 bg-muted/30 border-border"
                                 required
-                            />
-                        </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
-                            <Label htmlFor="deliveryDate" className="text-right text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70">
-                                Delivery
-                            </Label>
-                            <Input
-                                id="deliveryDate"
-                                type="date"
-                                value={formData.delivery_date}
-                                onChange={(e) => setFormData({ ...formData, delivery_date: e.target.value })}
-                                className="col-span-3 font-mono h-10 bg-muted/30 border-border text-foreground"
                             />
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">

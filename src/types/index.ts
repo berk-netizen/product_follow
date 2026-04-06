@@ -1,5 +1,5 @@
 export type Status = 'SAMPLE SEWN' | 'WAITING FABRIC' | 'IN CUTTING' | 'IN SEWING' | 'IRON/PACK' | 'IN WAREHOUSE' | 'SHIPPED';
-export type SampleStatus = 'NUMUNE TALEP' | 'DİKİM AŞAMASINDA' | 'MÜŞTERİYE GÖNDERİLDİ' | 'REVİZE İSTENDİ' | 'ONAYLANDI / ÜRETİME HAZIR';
+export type SampleStatus = 'REQUESTED' | 'IN SEWING' | 'SENT TO CLIENT' | 'REVISION NEEDED' | 'APPROVED';
 
 export interface ProductionItem {
     id: string;
@@ -31,7 +31,6 @@ export interface ProductionItem {
     target_sales_price: number;
     final_sales_price_tl: number;
     created_at: string;
-    delivery_date: string | null;
 }
 
 export interface ProductMaterial {

@@ -55,7 +55,7 @@ export function SampleItemCard({ item, isOverlay, onDelete, onSendToProduction, 
     };
 
     const displayImage = item.main_image_url || item.image_url;
-    const isApproved = currentColumn === 'ONAYLANDI / ÜRETİME HAZIR';
+    const isApproved = currentColumn === 'APPROVED';
 
     return (
         <div

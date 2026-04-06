@@ -19,11 +19,11 @@ import { SampleItemCard } from "./SampleItemCard";
 import { updateProductionItem, deleteProduct } from "@/lib/mockData";
 
 const SAMPLE_COLUMNS: { status: SampleStatus; title: string; emoji: string; accentColor: string }[] = [
-    { status: 'NUMUNE TALEP',              title: 'Requested',       emoji: '📋', accentColor: 'text-sky-400' },
-    { status: 'DİKİM AŞAMASINDA',          title: 'In Sewing',       emoji: '🧵', accentColor: 'text-amber-400' },
-    { status: 'MÜŞTERİYE GÖNDERİLDİ',     title: 'Sent to Client',  emoji: '📦', accentColor: 'text-blue-400' },
-    { status: 'REVİZE İSTENDİ',            title: 'Revision Needed', emoji: '✏️', accentColor: 'text-rose-400' },
-    { status: 'ONAYLANDI / ÜRETİME HAZIR', title: 'Approved',        emoji: '✅', accentColor: 'text-emerald-400' },
+    { status: 'REQUESTED',       title: 'Requested',       emoji: '📋', accentColor: 'text-sky-400' },
+    { status: 'IN SEWING',       title: 'In Sewing',       emoji: '🧵', accentColor: 'text-amber-400' },
+    { status: 'SENT TO CLIENT',  title: 'Sent to Client',  emoji: '📦', accentColor: 'text-blue-400' },
+    { status: 'REVISION NEEDED', title: 'Revision Needed', emoji: '✏️', accentColor: 'text-rose-400' },
+    { status: 'APPROVED',        title: 'Approved',        emoji: '✅', accentColor: 'text-emerald-400' },
 ];
 
 interface SampleKanbanBoardProps {
@@ -144,7 +144,7 @@ export default function SampleKanbanBoard({ initialItems }: SampleKanbanBoardPro
                     <SampleItemCard
                         item={activeItem}
                         isOverlay
-                        currentColumn={activeItem.sample_status ?? 'NUMUNE TALEP'}
+                        currentColumn={activeItem.sample_status ?? 'REQUESTED'}
                     />
                 ) : null}
             </DragOverlay>

@@ -45,7 +45,6 @@ export default function DashboardClient() {
             status: 'SAMPLE SEWN',
             sizes_breakdown: {},
             target_loading_date: newItemData.target_loading_date || null,
-            delivery_date: newItemData.delivery_date || null,
             po_date: null,
             fabric_arrival_date: null,
             cutting_date: null,
@@ -71,17 +70,17 @@ export default function DashboardClient() {
                 setItems(prev => [createdItem, ...prev]);
             } else {
                 console.error("Failed to create: Supabase returned no data.");
-                alert("Ürün eklenemedi. Konsola bakın.");
+                alert("Failed to add product. Please check console.");
             }
         } catch (error) {
             console.error("Failed to create product", error);
-            alert("Ürün eklenemedi.");
+            alert("Failed to add product.");
         }
     };
 
     const handleExportExcel = () => {
         if (items.length === 0) {
-            alert("Dışa aktarılacak veri bulunamadı.");
+            alert("No data found to export.");
             return;
         }
         
@@ -95,7 +94,6 @@ export default function DashboardClient() {
             "Durum": item.status,
             "Planlanan Adet": item.planned_qty,
             "Hedef Satış Fiyatı": item.target_sales_price,
-            "Teslimat Tarihi": item.delivery_date || '',
             "Kumaş Durumu": item.fabric_order_status
         }));
 
@@ -129,7 +127,6 @@ export default function DashboardClient() {
                         status: row["Durum"] || "SAMPLE SEWN",
                         planned_qty: Number(row["Planlanan Adet"]) || 0,
                         target_sales_price: Number(row["Hedef Satış Fiyatı"]) || 0,
-                        delivery_date: row["Teslimat Tarihi"] || null,
                         fabric_order_status: row["Kumaş Durumu"] || "PENDING",
                     };
                     const created = await createProductionItem(newItem);
@@ -138,10 +135,10 @@ export default function DashboardClient() {
                         importedCount++;
                     }
                 }
-                alert(`${importedCount} ürün başarıyla içe aktarıldı.`);
+                alert(`${importedCount} products successfully imported.`);
             } catch (error) {
                 console.error("Excel import error", error);
-                alert("Excel dosyası okunurken hata oluştu.");
+                alert("Error reading Excel file.");
             }
             if (fileInputRef.current) fileInputRef.current.value = "";
         };

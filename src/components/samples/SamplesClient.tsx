@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { FlaskConical, Plus } from "lucide-react";
 
-const DEFAULT_SAMPLE_STATUS: SampleStatus = "NUMUNE TALEP";
+const DEFAULT_SAMPLE_STATUS: SampleStatus = "REQUESTED";
 
 export default function SamplesClient() {
     const [items, setItems] = useState<ProductionItem[]>([]);
@@ -62,7 +62,6 @@ export default function SamplesClient() {
             cutting_date: null,
             actual_mfg_deadline: null,
             target_loading_date: null,
-            delivery_date: null,
             image_url: null,
             main_image_url: null,
             fabric_supplier: null,
